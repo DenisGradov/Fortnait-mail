@@ -1,17 +1,38 @@
 const { SMTPServer } = require("smtp-server");
+const { simpleParser } = require("mailparser");
 
 const server = new SMTPServer({
-  // Відключення автентифікації для базового тесту
   disabledCommands: ["AUTH"],
-
-  // Коли лист надіслано до сервера
   onData(stream, session, callback) {
-    // Тут може бути логіка для обробки повідомлення
+    let emailData = "";
     stream.on("data", (chunk) => {
-      console.log(chunk.toString()); // Для прикладу, просто виводимо в консоль
+      emailData += chunk.toString();
     });
 
-    stream.on("end", callback);
+    stream.on("end", () => {
+      simpleParser(emailData, (err, parsed) => {
+        if (err) {
+          console.error(err);
+        } else {
+          // Получаем данные из разобранного сообщения
+          const { from, to, subject, text, html, attachments } = parsed;
+          console.log(
+            "Отправитель:",
+            from.value.map((r) => r.address).join(", ")
+          );
+          console.log("Получатель:", to.value.map((r) => r.address).join(", "));
+          console.log("Тема:", subject);
+          console.log("Текстовое содержимое:", text);
+          // HTML содержимое, если есть
+          console.log("HTML содержимое:", html);
+          // Вложения, если есть
+          if (attachments) {
+            console.log("Количество вложений:", attachments.length);
+          }
+        }
+      });
+      callback();
+    });
   },
 });
 
