@@ -15,10 +15,10 @@ const server = new SMTPServer({
   },
 });
 
-// Слухаємо порт 587 замість порту 25
-server.listen(25, "127.0.0.1", () => {
+server.listen(25, "0.0.0.0", () => {
   console.log("SMTP server listening on port 25");
 });
+
 server.on("error", (err) => {
   console.error("Failed to start server", err);
 });
