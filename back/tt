@@ -1,0 +1,11 @@
+smtp-server
+
+ssh root@89.185.85.143
+
+cd /root/mailfort
+
+git pull origin main
+node server.js
+
+$tcp = New-Object System.Net.Sockets.TcpClient
+$tcp.Connect("mail.likemail.ru", 25)
