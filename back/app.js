@@ -10,7 +10,11 @@ const app = express();
 const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 // Для обробки JSON тіла запиту
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  })
+);
 
 // Соль для хеширования. 10 — это количество раундов генерации соли.
 const saltRounds = 10;
@@ -30,18 +34,25 @@ app.post("/", (req, res) => {
 
 app.post("/api/verifyToken", (req, res) => {
   const { token, login, loginType } = req.body;
-  if (!token) return res.status(401).send("Token is required");
-
-  searchRow("users", loginType, login, (row) => {
-    if (row) {
-      if (token === row.cookie) {
-        res.statusCode = 200;
-        res.send("Good");
+  console.log(req.body);
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  } else {
+    console.log(token);
+    searchRow("users", loginType, login, (row) => {
+      if (row) {
+        if (token === row.cookie) {
+          console.log(row);
+          res.statusCode = 200;
+          res.send(row.admin.toString());
+        }
+      } else {
+        console.log("Рядок не знайдено");
+        res.statusCode = 401;
+        res.send("don't good");
       }
-    } else {
-      console.log("Рядок не знайдено");
-    }
-  });
+    });
+  }
 });
 
 app.post("/api/login", (req, res) => {
@@ -83,17 +94,22 @@ app.post("/api/login", (req, res) => {
                 }
               );
               res.json({
+                errorData: [false, false],
                 token,
                 login: formData.login,
                 type: formData.login.includes("@") ? "email" : "login",
               });
             } else {
               console.log("Пароль не совпадает.");
+              res.statusCode = 401;
+              res.send("don't good");
             }
           }
         });
       } else {
         console.log("Рядок не знайдено");
+        res.statusCode = 401;
+        res.send("don't good");
       }
     }
   );
@@ -108,7 +124,7 @@ app.post("/logout", (req, res) => {
   res.send("Вы вышли из системы.");
 });
 
-const PORT = 5174;
+const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 });

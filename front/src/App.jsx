@@ -14,7 +14,8 @@ import Login from "./components/Login/Login";
 import Mail from "./components/Mail/Mail";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [checkCookieOnBack, setCheckCookieOnBack] = useState(false);
   function getCookie(name) {
     let nameEQ = name + "=";
     let ca = document.cookie.split(";");
@@ -30,24 +31,30 @@ function App() {
     const token = getCookie("authToken");
     const login = getCookie("login");
     const loginType = getCookie("type");
+    console.log(token);
     if (token) {
       axios
-        .post("http://localhost:5174/api/verifyToken", {
+        .post("http://localhost:3000/api/verifyToken", {
           token,
           login,
           loginType,
         })
-
         .then((response) => {
-          console.log("ssss");
           setIsAuthenticated(true);
         })
         .catch((error) => {
           console.error("Token validation failed", error);
           setIsAuthenticated(false);
-        });
+        })
+        .finally(() => setCheckCookieOnBack(true));
+    } else {
+      setIsAuthenticated(false);
+      setCheckCookieOnBack(true);
     }
   }, []);
+
+  if (!checkCookieOnBack)
+    return <div style={{ backgroundColor: "#19191a" }}>Waiting..</div>;
 
   return (
     <Router>

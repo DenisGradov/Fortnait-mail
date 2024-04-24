@@ -3,6 +3,9 @@
 body {
   overflow: hidden;
 }
+.errorData {
+  border: 2px solid #ff0000;
+}
 .wrapper {
   height: 100vh;
   background-color: #19191a;
@@ -15,12 +18,41 @@ body {
     flex-direction: column;
     padding: 58px 46px;
     max-width: 352px;
-    max-height: 246px;
+    max-height: 276px;
     width: 100%;
     height: 100%;
     background-color: #19191a;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
     border-radius: 15px;
+    @media (max-width: 444px) {
+      max-width: 65vw;
+    }
+    &CapchaBox {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
+      border-radius: 100px;
+
+      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
+      &__text {
+        font-family: "Inter";
+        font-weight: 400;
+        color: white;
+        font-size: 14px;
+        &:nth-child(2) {
+          margin: 0 20px;
+        }
+      }
+      &__input {
+        border-radius: 100px;
+        text-align: center;
+        width: 50px;
+        color: #315efb;
+        background-color: #315dfb20;
+      }
+    }
     &__title {
       font-family: "Inter";
       font-weight: bold;

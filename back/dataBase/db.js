@@ -16,9 +16,13 @@ function writeInDb() {
       console.error("Ошибка при хешировании:", err);
     } else {
       const db = new sqlite3.Database("./dataBase/mydatabase.db");
+      const posts = JSON.stringify({
+        sent: [],
+        received: [],
+      });
       db.run(
         "INSERT INTO users (email, login, password, admin, logs, posts, cookie) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        ["Stenford@likemail.ru", "Stenford", hash, "1", "", "", ""],
+        ["Stenford@likemail.ru", "Stenford", hash, "1", "", posts, ""],
         function (err) {
           if (err) {
             console.error("Ошибка при записи в базу данных:", err);

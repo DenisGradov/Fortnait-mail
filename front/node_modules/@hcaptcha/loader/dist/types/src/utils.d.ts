@@ -1,0 +1,6 @@
+export declare function generateQuery(params: any): string;
+export declare function getFrame(element: Element): {
+    document: any;
+    window: any;
+};
+export declare function getMountElement(element: Element): Element;

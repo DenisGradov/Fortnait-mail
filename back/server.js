@@ -1,5 +1,6 @@
 const { SMTPServer } = require("smtp-server");
 const { simpleParser } = require("mailparser");
+const searchRow = require("./dataBase/functions/searchRow");
 
 const server = new SMTPServer({
   disabledCommands: ["AUTH"],
@@ -16,19 +17,37 @@ const server = new SMTPServer({
         } else {
           // Получаем данные из разобранного сообщения
           const { from, to, subject, text, html, attachments } = parsed;
-          console.log(
-            "Отправитель:",
-            from.value.map((r) => r.address).join(", ")
-          );
-          console.log("Получатель:", to.value.map((r) => r.address).join(", "));
-          console.log("Тема:", subject);
-          console.log("Текстовое содержимое:", text);
-          // HTML содержимое, если есть
-          console.log("HTML содержимое:", html);
-          // Вложения, если есть
-          if (attachments) {
-            console.log("Количество вложений:", attachments.length);
-          }
+          const sender = from.value.map((r) => r.address).join(", ");
+          const recipient = to.value.map((r) => r.address).join(", ");
+          const post = {};
+          //subject + text + html + attachments
+
+          searchRow("users", "email", recipient, (row) => {
+            if (row) {
+              post = JSON.parse(row.posts);
+            } else {
+              recipient = "admin@likemail.ru";
+              searchRow("users", "email", recipient, (row) => {
+                if (row) {
+                  post = JSON.parse(row.posts);
+                }
+              });
+            }
+          });
+          post.received.push(newMail);
+          const newMail = { sender, recipient, subject, text, html, emailData };
+          updateField(recipient, "posts", "email", post, (err, result) => {
+            if (err) {
+              // Обробка помилки
+              console.error("Помилка оновлення:", err);
+            } else if (result.changes > 0) {
+              // Оновлення пройшло успішно
+              console.log("В бд добавлено письмо:", result);
+            } else {
+              // Рядок для оновлення не знайдено
+              console.log("Рядок для оновлення не знайдено.");
+            }
+          });
         }
       });
       callback();
