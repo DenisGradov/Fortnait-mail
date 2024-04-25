@@ -22,7 +22,7 @@ function writeInDb() {
       });
       db.run(
         "INSERT INTO users (email, login, password, admin, logs, posts, cookie) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        ["admin@likemail.ru", "arfar", hash, "0", "", posts, ""],
+        ["admin2@likemail.ru", "arfar", hash, "0", "", posts, ""],
         function (err) {
           if (err) {
             console.error("Ошибка при записи в базу данных:", err);
@@ -48,6 +48,6 @@ function searchInDb() {
   });
 }
 
-createDb();
+//createDb();
 writeInDb();
 //searchInDb();
