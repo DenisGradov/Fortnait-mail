@@ -16,8 +16,6 @@ function updatePosts(
 ) {
   const newMail = { sender, recipient, subject, text, html, emailData };
   console.log(post);
-  console.log(row);
-  console.log(row.posts);
   post.received.push(newMail);
 
   updateField(
