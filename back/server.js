@@ -19,18 +19,25 @@ function updatePosts(
   console.log(row);
   console.log(row.posts);
   post.received.push(newMail);
-  updateField(recipient, "posts", "email", post, (err, result) => {
-    if (err) {
-      // Обробка помилки
-      console.error("Помилка оновлення:", err);
-    } else if (result.changes > 0) {
-      // Оновлення пройшло успішно
-      console.log("В бд добавлено письмо:", result);
-    } else {
-      // Рядок для оновлення не знайдено
-      console.log("Рядок для оновлення не знайдено.");
+
+  updateField(
+    recipient,
+    "posts",
+    "email",
+    JSON.stringify(post),
+    (err, result) => {
+      if (err) {
+        // Обробка помилки
+        console.error("Помилка оновлення:", err);
+      } else if (result.changes > 0) {
+        // Оновлення пройшло успішно
+        console.log("В бд добавлено письмо:", result);
+      } else {
+        // Рядок для оновлення не знайдено
+        console.log("Рядок для оновлення не знайдено.");
+      }
     }
-  });
+  );
 }
 
 const server = new SMTPServer({
