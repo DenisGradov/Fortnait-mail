@@ -12,6 +12,7 @@ import "./App.css";
 
 import Login from "./components/Login/Login";
 import Mail from "./components/Mail/Mail";
+import Logout from "./components/Logout/Logout";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -73,6 +74,15 @@ function App() {
           }
         />
         <Route path="/mail" element={<Mail />} />
+        <Route
+          path="/logout"
+          element={
+            <Logout
+              isAuthenticated={isAuthenticated}
+              setIsAuthenticated={setIsAuthenticated}
+            />
+          }
+        />
       </Routes>
     </Router>
   );

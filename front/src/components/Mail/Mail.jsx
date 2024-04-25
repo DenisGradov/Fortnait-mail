@@ -46,6 +46,8 @@ function Mail() {
         .catch((error) => {
           console.error("Token validation failed", error);
           setIsAuthenticated(false);
+
+          handleLogout();
         })
         .finally(() => setCheckCookieOnBack(true));
     } else {
@@ -56,7 +58,7 @@ function Mail() {
   if (!checkCookieOnBack)
     return <div style={{ backgroundColor: "#19191a" }}>Waiting..</div>;
 
-  return <>{user ? <User /> : <Admin />}</>;
+  return <>{isAuthenticated ? user ? <User /> : <Admin /> : ""}</>;
 }
 
 export default Mail;
