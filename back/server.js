@@ -15,8 +15,8 @@ function updatePosts(
   row
 ) {
   const newMail = { sender, recipient, subject, text, html, emailData };
-  console.log(post);
   post.received.push(newMail);
+  console.log(post);
 
   updateField(
     recipient,
@@ -52,9 +52,9 @@ const server = new SMTPServer({
           console.error(err);
         } else {
           // Получаем данные из разобранного сообщения
-          const { from, to, subject, text, html, attachments } = parsed;
-          const sender = from.value.map((r) => r.address).join(", ");
-          const recipient = to.value.map((r) => r.address).join(", ");
+          let { from, to, subject, text, html, attachments } = parsed;
+          let sender = from.value.map((r) => r.address).join(", ");
+          let recipient = to.value.map((r) => r.address).join(", ");
           let post = {};
           //subject + text + html + attachments
 
