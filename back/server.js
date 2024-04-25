@@ -36,6 +36,8 @@ const server = new SMTPServer({
             }
           });
           const newMail = { sender, recipient, subject, text, html, emailData };
+          console.log(post);
+          console.log(newMail);
           post.received.push(newMail);
           updateField(recipient, "posts", "email", post, (err, result) => {
             if (err) {
