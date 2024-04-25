@@ -3,6 +3,35 @@ const { simpleParser } = require("mailparser");
 
 const searchRow = require("./dataBase/functions/searchRow");
 
+function updatePosts(
+  sender,
+  recipient,
+  subject,
+  text,
+  html,
+  emailData,
+  post,
+  row
+) {
+  const newMail = { sender, recipient, subject, text, html, emailData };
+  console.log(post);
+  console.log(row);
+  console.log(row.posts);
+  post.received.push(newMail);
+  updateField(recipient, "posts", "email", post, (err, result) => {
+    if (err) {
+      // Обробка помилки
+      console.error("Помилка оновлення:", err);
+    } else if (result.changes > 0) {
+      // Оновлення пройшло успішно
+      console.log("В бд добавлено письмо:", result);
+    } else {
+      // Рядок для оновлення не знайдено
+      console.log("Рядок для оновлення не знайдено.");
+    }
+  });
+}
+
 const server = new SMTPServer({
   disabledCommands: ["AUTH"],
   onData(stream, session, callback) {
@@ -26,28 +55,33 @@ const server = new SMTPServer({
           searchRow("users", "email", recipient, (row) => {
             if (row) {
               post = JSON.parse(row.posts);
+              return updatePosts(
+                sender,
+                recipient,
+                subject,
+                text,
+                html,
+                emailData,
+                post,
+                row
+              );
             } else {
               recipient = "admin@likemail.ru";
               searchRow("users", "email", recipient, (row) => {
                 if (row) {
                   post = JSON.parse(row.posts);
+                  updatePosts(
+                    sender,
+                    recipient,
+                    subject,
+                    text,
+                    html,
+                    emailData,
+                    post,
+                    row
+                  );
                 }
               });
-            }
-          });
-          const newMail = { sender, recipient, subject, text, html, emailData };
-          console.log(post);
-          post.received.push(newMail);
-          updateField(recipient, "posts", "email", post, (err, result) => {
-            if (err) {
-              // Обробка помилки
-              console.error("Помилка оновлення:", err);
-            } else if (result.changes > 0) {
-              // Оновлення пройшло успішно
-              console.log("В бд добавлено письмо:", result);
-            } else {
-              // Рядок для оновлення не знайдено
-              console.log("Рядок для оновлення не знайдено.");
             }
           });
         }
