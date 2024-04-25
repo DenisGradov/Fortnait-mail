@@ -49,7 +49,7 @@ const server = new SMTPServer({
           const { from, to, subject, text, html, attachments } = parsed;
           const sender = from.value.map((r) => r.address).join(", ");
           const recipient = to.value.map((r) => r.address).join(", ");
-          const post = {};
+          let post = {};
           //subject + text + html + attachments
 
           searchRow("users", "email", recipient, (row) => {
