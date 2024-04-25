@@ -14,7 +14,15 @@ function updatePosts(
   post,
   row
 ) {
-  const newMail = { sender, recipient, subject, text, html, emailData };
+  const newMail = {
+    viewed: false,
+    date: Date.now(),
+    sender,
+    recipient,
+    subject,
+    text,
+    html,
+  };
   post.received.push(newMail);
   console.log(post);
 

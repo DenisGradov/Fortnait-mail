@@ -9,3 +9,7 @@ node server.js
 
 $tcp = New-Object System.Net.Sockets.TcpClient
 $tcp.Connect("mail.likemail.ru", 25)
+
+
+scp root@89.185.85.143:/root/Fortnait-mail/back/dataBase/mydatabase.db "C:\Users\Varon\Desktop\fortnite mail\back\dataBase\mydatabase.db"
+Arfar1754

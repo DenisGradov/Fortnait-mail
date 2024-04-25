@@ -32,24 +32,45 @@ app.post("/", (req, res) => {
   res.send("Вы вошли в систему.");
 });
 
-app.post("/api/verifyToken", (req, res) => {
+app.post("/api/getPosts", (req, res) => {
   const { token, login, loginType } = req.body;
-  console.log(req.body);
   if (token == "undefined") {
     return res.status(401).send("Token is required");
   } else {
-    console.log(token);
     searchRow("users", loginType, login, (row) => {
+      console.log(loginType);
+      console.log(row.cookie);
+      if (row) {
+        if (token === row.cookie) {
+          res.json(JSON.parse(row.posts));
+        } else {
+          console.log("Рядок не знайдено");
+          res.statusCode = 401;
+          res.send("don't good");
+        }
+      }
+    });
+  }
+});
+
+app.post("/api/verifyToken", (req, res) => {
+  const { token, login, loginType } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  } else {
+    searchRow("users", loginType, login, (row) => {
+      console.log(loginType);
+      console.log(row.cookie);
       if (row) {
         if (token === row.cookie) {
           console.log(row);
           res.statusCode = 200;
           res.send(row.admin.toString());
+        } else {
+          console.log("Рядок не знайдено");
+          res.statusCode = 401;
+          res.send("don't good");
         }
-      } else {
-        console.log("Рядок не знайдено");
-        res.statusCode = 401;
-        res.send("don't good");
       }
     });
   }
