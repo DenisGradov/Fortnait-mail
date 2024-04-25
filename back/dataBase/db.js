@@ -26,12 +26,13 @@ function writeInDb() {
         function (err) {
           if (err) {
             console.error("Ошибка при записи в базу данных:", err);
+            db.close();
           } else {
             console.log("Пользователь добавлен с ID:", this.lastID);
+            db.close();
           }
         }
       );
-      db.close();
     }
   });
 }

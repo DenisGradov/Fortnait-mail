@@ -62,6 +62,7 @@ const server = new SMTPServer({
 
           searchRow("users", "email", recipient, (row) => {
             if (row) {
+              console.log(row.posts);
               post = JSON.parse(row.posts);
               return updatePosts(
                 sender,
