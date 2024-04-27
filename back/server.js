@@ -15,6 +15,7 @@ function updatePosts(
   row
 ) {
   const newMail = {
+    id: post.received.length + 1, // Добавляем уникальный ID
     viewed: false,
     date: Date.now(),
     sender,

@@ -76,6 +76,56 @@ app.post("/api/verifyToken", (req, res) => {
   }
 });
 
+app.post("/api/checkPost", (req, res) => {
+  const { token, login, loginType, element } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  } else {
+    searchRow("users", loginType, login, (row) => {
+      if (row && token === row.cookie) {
+        let postsObject = JSON.parse(row.posts);
+        let receivedUpdated = false;
+        const newReceived = postsObject.received.map((e) => {
+          if (e.id === element.id) {
+            // Предполагаем, что у вас есть уникальный идентификатор письма
+            receivedUpdated = true;
+            return { ...e, viewed: true };
+          }
+          return e;
+        });
+
+        if (receivedUpdated) {
+          const updatedPosts = {
+            ...postsObject,
+            received: newReceived,
+          };
+          updateField(
+            login,
+            "posts",
+            login.includes("@") ? "email" : "login",
+            JSON.stringify(updatedPosts),
+            (err, result) => {
+              if (err) {
+                console.error("Помилка оновлення:", err);
+                res.status(500).send("Server error");
+              } else if (result.changes > 0) {
+                res.json(updatedPosts); // Отправляем полный объект posts на фронтенд
+              } else {
+                console.log("Рядок для оновлення не знайдено.");
+                res.status(404).send("User not found");
+              }
+            }
+          );
+        } else {
+          res.status(404).send("Mail not found");
+        }
+      } else {
+        res.status(401).send("Invalid token or user not found");
+      }
+    });
+  }
+});
+
 app.post("/api/login", (req, res) => {
   console.log("sssss2");
   const { formData } = req.body;

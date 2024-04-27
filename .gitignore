@@ -1,5 +1,7 @@
 # Зависимости
 /node_modules/
+node_modules/
+tt
 
 # Каталоги сборки
 /build/
