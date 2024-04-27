@@ -58,7 +58,22 @@ function Mail() {
   if (!checkCookieOnBack)
     return <div style={{ backgroundColor: "#19191a" }}>Waiting..</div>;
 
-  return <>{isAuthenticated ? user ? <User /> : <Admin /> : ""}</>;
+  return (
+    <>
+      {isAuthenticated ? (
+        user ? (
+          <User
+            isAuthenticated={isAuthenticated}
+            setIsAuthenticated={setIsAuthenticated}
+          />
+        ) : (
+          <Admin />
+        )
+      ) : (
+        ""
+      )}
+    </>
+  );
 }
 
 export default Mail;
