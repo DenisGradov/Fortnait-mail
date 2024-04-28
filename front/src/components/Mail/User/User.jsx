@@ -9,47 +9,43 @@ import {
   RiSettings3Line,
 } from "react-icons/ri";
 import DOMPurify from "dompurify";
+import UserSettings from "../UserSettings/UserSettings";
+import useCookie from "../../../hooks/useCookie";
+import SendMail from "../../SendMail/SendMail";
+
 function User({ isAuthenticated, setIsAuthenticated }) {
   const [posts, setPosts] = useState({ sent: [], received: [] });
+  const [sendMail, setSendMail] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [filteredPosts, setFilteredPosts] = useState([]);
+
   const [searchInput, setSearchInput] = useState("");
   const [mailOnScreen, setMailOnScreen] = useState({
     numerPage: 0,
     mailOpen: false,
     element: 0,
   });
-  function getCookie(name) {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === " ") c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0)
-        return decodeURIComponent(c.substring(nameEQ.length, c.length));
-    }
-    return null;
-  }
+
+  const token = useCookie("authToken");
+  const login = useCookie("login");
+  const loginType = useCookie("type");
+
   function handleOpenMail(element) {
     console.log(element.viewed);
     if (!element.viewed) {
       console.log("sss2");
-      const token = getCookie("authToken");
-      const login = getCookie("login");
-      const loginType = getCookie("type");
-
       axios
         .post("http://localhost:3000/api/checkPost", {
           token,
           login,
           loginType,
-          element: mailOnScreen.element,
+          element,
         })
         .then((response) => {
           let newPosts = response.data;
           console.log(newPosts);
           newPosts.received = newPosts.received.reverse();
-          for (let i = 0; i < 225; i++) {
-            newPosts.received.push(newPosts.received[0]);
-          }
+
           setPosts(newPosts);
         })
         .catch((error) => {
@@ -63,31 +59,22 @@ function User({ isAuthenticated, setIsAuthenticated }) {
       element,
     }));
   }
+
   const getMailRange = () => {
+    const totalPosts = filteredPosts.length;
     const currentPage = mailOnScreen.numerPage;
-
-    // Calculate start index of posts for current page
     const startIndex = currentPage * postsPerPage + 1;
-
-    // Calculate end index for current page
     let endIndex = startIndex + postsPerPage - 1;
-
-    // If the calculated end index exceeds the total number of posts, adjust it to totalPosts
     if (endIndex > totalPosts) {
       endIndex = totalPosts;
     }
-
-    // Return the formatted string
     return `${startIndex}-${endIndex} of ${totalPosts}`;
   };
+
   const totalPosts = posts.received.length;
   const postsPerPage = 50;
   const maxPage = Math.ceil(totalPosts / postsPerPage) - 1;
   useEffect(() => {
-    const token = getCookie("authToken");
-    const login = getCookie("login");
-    const loginType = getCookie("type");
-
     if (token) {
       axios
         .post("http://localhost:3000/api/getPosts", {
@@ -98,10 +85,9 @@ function User({ isAuthenticated, setIsAuthenticated }) {
         .then((response) => {
           let newPosts = response.data;
           newPosts.received = newPosts.received.reverse();
-          for (let i = 0; i < 225; i++) {
-            newPosts.received.push(newPosts.received[0]);
-          }
+
           setPosts(newPosts);
+          setFilteredPosts(newPosts.received);
         })
         .catch((error) => {
           console.error("Token validation failed", error);
@@ -111,10 +97,56 @@ function User({ isAuthenticated, setIsAuthenticated }) {
       setIsAuthenticated(false);
     }
   }, []);
+
+  useEffect(() => {
+    const results = posts.received.filter(
+      (item) =>
+        (item.text &&
+          item.text.toLowerCase().includes(searchInput.toLowerCase())) ||
+        (item.sender &&
+          item.sender.toLowerCase().includes(searchInput.toLowerCase())) ||
+        (item.subject &&
+          item.subject.toLowerCase().includes(searchInput.toLowerCase()))
+    );
+    setFilteredPosts(results);
+    setMailOnScreen((prev) => ({ ...prev, numerPage: 0 }));
+  }, [searchInput, posts.received]);
+  useEffect(() => {
+    const totalFilteredPosts = filteredPosts.length;
+    const maxPage = Math.ceil(totalFilteredPosts / postsPerPage) - 1;
+
+    // Установить текущую страницу на последнюю, если текущая страница теперь за пределами диапазона
+    if (mailOnScreen.numerPage > maxPage) {
+      setMailOnScreen((prev) => ({
+        ...prev,
+        numerPage: maxPage >= 0 ? maxPage : 0,
+      }));
+    }
+  }, [filteredPosts, mailOnScreen.numerPage]);
+
   console.log(posts.received);
   function handleUpdateInput(e) {
     setSearchInput(e.target.value);
   }
+  function formatDateWithUserTimezone(timestamp) {
+    // Получение часового пояса пользователя
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // Создание объекта даты
+    const date = new Date(timestamp);
+
+    // Возвращение строки даты в формате "12 April 12:34", с учетом часового пояса пользователя
+    return date.toLocaleString("en-US", {
+      timeZone: timeZone,
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+  }
+
   const formatDateOrTime = (itemDate) => {
     itemDate = new Date(itemDate); // Convert itemDate to a Date object
     const now = new Date();
@@ -130,6 +162,17 @@ function User({ isAuthenticated, setIsAuthenticated }) {
       })}`;
     }
   };
+  if (settingsOpen) {
+    return (
+      <UserSettings
+        setSettingsOpen={setSettingsOpen}
+        setIsAuthenticated={setIsAuthenticated}
+      />
+    );
+  }
+  if (sendMail) {
+    return <SendMail setSendMail={setSendMail} />;
+  }
   if (mailOnScreen.mailOpen) {
     const item = mailOnScreen.element;
     const cleanHTML = DOMPurify.sanitize(mailOnScreen.element.html);
@@ -170,7 +213,7 @@ function User({ isAuthenticated, setIsAuthenticated }) {
                 : ""}
             </h2>
             <h2 className={styles.bottomBoxWithReceivedItem__element}>
-              {formatDateOrTime(item.date)}
+              {formatDateWithUserTimezone(item.date)}
             </h2>
           </div>
         </div>
@@ -183,7 +226,14 @@ function User({ isAuthenticated, setIsAuthenticated }) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.top}>
-        <h2 className={`${styles.top__send} ${styles.noSelect}`}>Send mail</h2>
+        <h2
+          onClick={() => {
+            setSendMail(true);
+          }}
+          className={`${styles.top__send} ${styles.noSelect}`}
+        >
+          Send mail
+        </h2>
 
         <div className={styles.topMenuSearch}>
           <input
@@ -196,7 +246,12 @@ function User({ isAuthenticated, setIsAuthenticated }) {
           />
           <RiSearchLine className={styles.topMenuSearch__icon} />
         </div>
-        <RiSettings3Line className={styles.topMenuSettings} />
+        <RiSettings3Line
+          onClick={() => {
+            setSettingsOpen(true);
+          }}
+          className={styles.topMenuSettings}
+        />
       </div>
       <div className={styles.NumberMails}>
         <h2 className={`${styles.noSelect} ${styles.NumberMailsNumer}`}>

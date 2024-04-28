@@ -1,0 +1,73 @@
+.back {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  font-size: 50px;
+  color: #315efb;
+
+  cursor: pointer;
+  &:hover {
+    scale: 1.03;
+    transition-duration: 0.3s;
+  }
+}
+.wrapper {
+  width: 100vw;
+  height: 100vh;
+  &Form {
+    padding: 20px;
+    padding-top: 70px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 500px;
+    background-color: #19191a;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+    @media (max-width: 538px) {
+      width: 90vw;
+    }
+    &__input,
+    &__textarea {
+      margin: 10px 0;
+      width: 90%;
+      padding: 12px 17px;
+      border-radius: 100px;
+      color: #315efb;
+      background-color: #315dfb20;
+      &:nth-child(1) {
+      }
+      &::placeholder {
+        opacity: 1;
+        color: #315efb;
+      }
+      &Text {
+        font-family: "Inter";
+        font-weight: 400;
+        color: white;
+        font-size: 14px;
+      }
+    }
+    &__textarea {
+      border-radius: 10px;
+      height: 100px;
+    }
+    &__button {
+      display: block;
+      margin-top: 17px;
+      padding: 10px 10px;
+      text-align: center;
+      color: #ffffff;
+      font-family: "Roboto";
+      background-color: #315efb;
+      border-radius: 100px;
+      cursor: pointer;
+      &:hover {
+        scale: 1.03;
+        transition-duration: 0.3s;
+      }
+    }
+  }
+}

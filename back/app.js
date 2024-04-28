@@ -4,6 +4,8 @@ const bcrypt = require("bcrypt");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
+const transporter = require("./transporter");
+
 const searchRow = require("./dataBase/functions/searchRow.js");
 const updateField = require("./dataBase/functions/updateField.js");
 const app = express();
@@ -30,6 +32,41 @@ app.post("/", (req, res) => {
     secure: true,
   });
   res.send("Вы вошли в систему.");
+});
+
+app.post("/api/SendMail", (req, res) => {
+  const { token, login, loginType, sendTo, sendSubject, sendText } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  } else {
+    searchRow("users", loginType, login, (row) => {
+      console.log(loginType);
+      console.log(row.cookie);
+      if (row) {
+        if (token === row.cookie) {
+          let mailOptions = {
+            from: row.email,
+            to: sendTo, // Адреса отримувача
+            subject: sendSubject, // Тема листа
+            text: sendText, // Текст листа
+          };
+          transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+              console.error("Помилка при відправленні: ", error);
+              res.status(500).send("Помилка сервера при відправленні листа");
+            } else {
+              console.log("Лист відправлено: %s", info.messageId);
+              res.send("Лист успішно відправлено");
+            }
+          });
+        } else {
+          console.log("Рядок не знайдено");
+          res.statusCode = 401;
+          res.send("don't good");
+        }
+      }
+    });
+  }
 });
 
 app.post("/api/getPosts", (req, res) => {
@@ -75,6 +112,75 @@ app.post("/api/verifyToken", (req, res) => {
     });
   }
 });
+app.post("/api/ChangePassword", (req, res) => {
+  const { token, login, loginType, oldPassword, newPassword } = req.body;
+
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  }
+
+  searchRow("users", loginType, login, (row) => {
+    if (!row) {
+      return res.status(404).send("User not found");
+    }
+    if (token !== row.cookie) {
+      return res.status(401).send("Invalid token");
+    }
+
+    bcrypt.compare(oldPassword, row.password, (err, isMatch) => {
+      if (err) {
+        console.error("Ошибка при проверке пароля:", err);
+        return res.status(500).send("Ошибка при проверке пароля");
+      }
+      if (!isMatch) {
+        return res.status(401).send("Old password does not match");
+      }
+
+      bcrypt.hash(newPassword, 10, (err, hash) => {
+        if (err) {
+          console.error("Ошибка при хешировании:", err);
+          return res.status(500).send("Ошибка при хешировании нового пароля");
+        }
+
+        updateField(
+          login,
+          "password",
+          login.includes("@") ? "email" : "login",
+          hash,
+          (err, result) => {
+            if (err) {
+              console.error("Помилка оновлення:", err);
+              return res.status(500).send("Ошибка при обновлении пароля");
+            }
+            if (result.changes <= 0) {
+              return res.status(404).send("User not found");
+            }
+
+            // Пароль успешно обновлён, очистка cookie
+            updateField(
+              login,
+              "cookie",
+              login.includes("@") ? "email" : "login",
+              "",
+              (err, result) => {
+                if (err) {
+                  console.error("Помилка оновлення cookie:", err);
+                  return res.status(500).send("Ошибка при обновлении cookie");
+                }
+                if (result.changes <= 0) {
+                  return res.status(404).send("User not found");
+                }
+
+                // Отправка ответа о успешном изменении пароля
+                res.send("password change");
+              }
+            );
+          }
+        );
+      });
+    });
+  });
+});
 
 app.post("/api/checkPost", (req, res) => {
   const { token, login, loginType, element } = req.body;
@@ -86,6 +192,7 @@ app.post("/api/checkPost", (req, res) => {
         let postsObject = JSON.parse(row.posts);
         let receivedUpdated = false;
         const newReceived = postsObject.received.map((e) => {
+          console.log("asdasd");
           if (e.id === element.id) {
             // Предполагаем, что у вас есть уникальный идентификатор письма
             receivedUpdated = true;

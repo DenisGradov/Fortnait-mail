@@ -13,25 +13,16 @@ import "./App.css";
 import Login from "./components/Login/Login";
 import Mail from "./components/Mail/Mail";
 import Logout from "./components/Logout/Logout";
+import useCookie from "./hooks/useCookie";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [checkCookieOnBack, setCheckCookieOnBack] = useState(false);
-  function getCookie(name) {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === " ") c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0)
-        return decodeURIComponent(c.substring(nameEQ.length, c.length));
-    }
-    return null;
-  }
+
+  const token = useCookie("authToken");
+  const login = useCookie("login");
+  const loginType = useCookie("type");
   useEffect(() => {
-    const token = getCookie("authToken");
-    const login = getCookie("login");
-    const loginType = getCookie("type");
     console.log(token);
     if (token) {
       axios
@@ -80,6 +71,7 @@ function App() {
             <Logout
               isAuthenticated={isAuthenticated}
               setIsAuthenticated={setIsAuthenticated}
+              setCheckCookieOnBack={setCheckCookieOnBack}
             />
           }
         />

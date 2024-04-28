@@ -4,31 +4,21 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import User from "./User/User";
 import Admin from "./Admin/Admin";
+import useCookie from "../../hooks/useCookie";
 
 function Mail() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [checkCookieOnBack, setCheckCookieOnBack] = useState(false);
   const [user, setUser] = useState(true);
   const navigate = useNavigate();
+
+  const token = useCookie("authToken");
+  const login = useCookie("login");
+  const loginType = useCookie("type");
   const handleLogout = () => {
     navigate("/");
   };
-  function getCookie(name) {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      while (c.charAt(0) === " ") c = c.substring(1, c.length);
-      if (c.indexOf(nameEQ) === 0)
-        return decodeURIComponent(c.substring(nameEQ.length, c.length));
-    }
-    return null;
-  }
   useEffect(() => {
-    const token = getCookie("authToken");
-    const login = getCookie("login");
-    const loginType = getCookie("type");
-    console.log(token);
     if (token) {
       axios
         .post("http://localhost:3000/api/verifyToken", {
@@ -38,22 +28,20 @@ function Mail() {
         })
         .then((response) => {
           setIsAuthenticated(true);
-          console.log(response.data);
-          if (response.data == "1") {
+          if (response.data === "1") {
             setUser(false);
           }
+          setCheckCookieOnBack(true);
         })
         .catch((error) => {
           console.error("Token validation failed", error);
           setIsAuthenticated(false);
-
           handleLogout();
-        })
-        .finally(() => setCheckCookieOnBack(true));
+        });
     } else {
       handleLogout();
     }
-  }, []);
+  }, []); // Пустой массив зависимостей гарантирует, что запрос выполняется один раз
 
   if (!checkCookieOnBack)
     return <div style={{ backgroundColor: "#19191a" }}>Waiting..</div>;
