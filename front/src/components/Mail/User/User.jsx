@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import styles from "./User.module.scss";
+import styles from "./user.module.scss";
 import axios from "axios";
 import {
   RiArrowLeftCircleFill,
