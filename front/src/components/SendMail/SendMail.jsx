@@ -16,14 +16,15 @@ function SendMail({ setSendMail }) {
   const loginType = useCookie("type");
   const navigate = useNavigate();
   function handleButtonClick() {
+    console.log(sendMailInfo);
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/api/SendMail`, {
         token,
         login,
         loginType,
-        to: sendMailInfo.to,
-        subject: sendMailInfo.subject,
-        text: sendMailInfo.text,
+        sendTo: sendMailInfo.to,
+        sendSubject: sendMailInfo.subject,
+        sendText: sendMailInfo.text,
       })
       .then((response) => {
         if (response.data == "send") {

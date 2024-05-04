@@ -13,12 +13,6 @@ tt
 # Отчеты о покрытии кода
 /coverage/
 
-# Файлы окружения
-.env
-.env.local
-.env.development
-.env.test
-.env.production
 # Лок файлы
 package-lock.json
 yarn.lock
