@@ -239,7 +239,7 @@ app.post("/api/checkPost", (req, res) => {
   }
 });
 
-app.get("/helloworld", (req, res) => {
+app.post("/helloworld", (req, res) => {
   res.status(200);
   res.send(`
     <!DOCTYPE html>
