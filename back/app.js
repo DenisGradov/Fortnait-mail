@@ -23,6 +23,7 @@ console.log(domain); // виведе вашдомен.com
 
 const searchRow = require("./dataBase/functions/searchRow.js");
 const updateField = require("./dataBase/functions/updateField.js");
+const getAllUsers = require("./dataBase/functions/getAllUsers.js");
 const app = express();
 const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 // Для обробки JSON тіла запиту
@@ -100,6 +101,39 @@ app.post("/api/getPosts", (req, res) => {
     });
   }
 });
+app.post("/api/getUsers", (req, res) => {
+  const { token, login, loginType } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  }
+
+  searchRow("users", loginType, login, (row) => {
+    console.log(loginType);
+    console.log(row.cookie);
+    if (row) {
+      if (token === row.cookie) {
+        getAllUsers("users", (err, users) => {
+          if (err) {
+            console.log("Сталася помилка:", err);
+            return res.status(500).send("Server error");
+          } else if (users.length > 0) {
+            console.log("Знайдені користувачі:", users);
+            res.status(200).send(users);
+          } else {
+            console.log("Користувачі не знайдені.");
+            res.status(404).send("Users not found");
+          }
+        });
+      } else {
+        console.log("Рядок не знайдено");
+        res.status(401).send("Invalid token");
+      }
+    } else {
+      console.log("Рядок не знайдено");
+      res.status(401).send("User not found");
+    }
+  });
+});
 
 app.post("/api/verifyToken", (req, res) => {
   const { token, login, loginType } = req.body;
@@ -108,7 +142,6 @@ app.post("/api/verifyToken", (req, res) => {
   } else {
     searchRow("users", loginType, login, (row) => {
       console.log(loginType);
-      console.log(row.cookie);
       if (row) {
         if (token === row.cookie) {
           console.log(row);

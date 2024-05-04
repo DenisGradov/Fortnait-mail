@@ -5,7 +5,7 @@ function createDb() {
   const db = new sqlite3.Database("./dataBase/mydatabase.db");
   db.serialize(function () {
     db.run(
-      "CREATE TABLE if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, login TEXT, password TEXT, admin INTEGER,logs TEXT, posts TEXT, cookie TEXT)"
+      "CREATE TABLE if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, login TEXT, password TEXT, admin INTEGER,logs TEXT, posts TEXT, cookie TEXT, lastAsset TEXT)"
     );
   });
   db.close();
@@ -21,8 +21,17 @@ function writeInDb() {
         received: [],
       });
       db.run(
-        "INSERT INTO users (email, login, password, admin, logs, posts, cookie) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        ["mamont@likemail.ru", "arfar", hash, "0", "", posts, ""],
+        "INSERT INTO users (email, login, password, admin, logs, posts, cookie,lastAsset ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          "IslamAliev2008@kvantomail.com",
+          "IslamAliev",
+          hash,
+          "0",
+          "",
+          posts,
+          "",
+          "none",
+        ],
         function (err) {
           if (err) {
             console.error("Ошибка при записи в базу данных:", err);
