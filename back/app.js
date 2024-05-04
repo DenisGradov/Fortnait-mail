@@ -3,8 +3,18 @@ const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
-const transporter = require("./transporter");
+const nodemailer = require("nodemailer");
+
 require("dotenv").config({ path: "../.env" });
+
+const transporter = nodemailer.createTransport({
+  host: "localhost",
+  port: 25,
+  secure: false, // true для порта 465, false для порта 25 или 587
+  tls: {
+    rejectUnauthorized: false, // Если ваш сервер не использует сертификаты SSL/TLS
+  },
+});
 
 const cors = require("cors");
 
