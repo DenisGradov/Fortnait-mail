@@ -12,6 +12,7 @@ import DOMPurify from "dompurify";
 import UserSettings from "../UserSettings/UserSettings";
 import useCookie from "../../../hooks/useCookie";
 import SendMail from "../../SendMail/SendMail";
+import NotWorking from "../../NotWorking/NotWorking";
 
 function User({ isAuthenticated, setIsAuthenticated }) {
   const [posts, setPosts] = useState({ sent: [], received: [] });
@@ -171,7 +172,8 @@ function User({ isAuthenticated, setIsAuthenticated }) {
     );
   }
   if (sendMail) {
-    return <SendMail setSendMail={setSendMail} />;
+    return <NotWorking setSendMail={setSendMail} />;
+    //return <SendMail setSendMail={setSendMail} />;
   }
   if (mailOnScreen.mailOpen) {
     const item = mailOnScreen.element;

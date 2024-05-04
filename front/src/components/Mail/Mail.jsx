@@ -28,7 +28,7 @@ function Mail() {
         })
         .then((response) => {
           setIsAuthenticated(true);
-          if (response.data === "1") {
+          if (response.data == "1") {
             setUser(false);
           }
           setCheckCookieOnBack(true);
@@ -45,7 +45,7 @@ function Mail() {
 
   if (!checkCookieOnBack)
     return <div style={{ backgroundColor: "#19191a" }}>Waiting..</div>;
-
+  console.log(user);
   return (
     <>
       {isAuthenticated ? (
