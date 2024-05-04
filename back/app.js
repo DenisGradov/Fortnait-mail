@@ -16,11 +16,7 @@ const app = express();
 const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 // Для обробки JSON тіла запиту
 app.use(express.json());
-app.use(
-  cors({
-    origin: "https://kvantomail.com",
-  })
-);
+app.use(cors());
 
 // Соль для хеширования. 10 — это количество раундов генерации соли.
 const saltRounds = 10;
