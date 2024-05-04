@@ -26,7 +26,7 @@ function App() {
     console.log(token);
     if (token) {
       axios
-        .post("http://localhost:3000/api/verifyToken", {
+        .post("https://kvantomail.com/api/verifyToken", {
           token,
           login,
           loginType,

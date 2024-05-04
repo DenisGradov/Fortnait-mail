@@ -5,6 +5,10 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const transporter = require("./transporter");
+require("dotenv").config({ path: "../.env" });
+
+const domain = process.env.DOMAIN;
+console.log(domain); // виведе вашдомен.com
 
 const searchRow = require("./dataBase/functions/searchRow.js");
 const updateField = require("./dataBase/functions/updateField.js");

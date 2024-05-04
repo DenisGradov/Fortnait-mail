@@ -46,7 +46,7 @@ function Login({ isAuthenticated, setIsAuthenticated }) {
     const myObject = { formData, checkbox };
     localStorage.setItem("formInfo", JSON.stringify(myObject));
     axios
-      .post("http://localhost:3000/api/login", { formData })
+      .post("https://kvantomail.com/api/login", { formData })
 
       .then((response) => {
         console.log(response);
