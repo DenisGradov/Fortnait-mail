@@ -19,8 +19,9 @@ const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://kvantomail.com",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: "https://kvantomail.com", // Точно вказати дозволений домен
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
