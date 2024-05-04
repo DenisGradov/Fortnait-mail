@@ -8,7 +8,7 @@ const nodemailer = require("nodemailer");
 require("dotenv").config({ path: "../.env" });
 
 const transporter = nodemailer.createTransport({
-  host: "localhost",
+  host: "127.0.0.1", // Указываем IPv4 адрес localhost
   port: 25,
   secure: false, // true для порта 465, false для порта 25 или 587
   tls: {

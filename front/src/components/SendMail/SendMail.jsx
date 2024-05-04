@@ -67,6 +67,7 @@ function SendMail({ setSendMail }) {
             }}
             className={styles.wrapperForm__input}
             type="text"
+            name="To whom"
             placeholder="To whom"
             onSubmit={handleButtonClick}
           />
@@ -81,6 +82,7 @@ function SendMail({ setSendMail }) {
             }}
             className={styles.wrapperForm__input}
             type="text"
+            name="Subject"
             placeholder="Subject"
             onSubmit={handleButtonClick}
           />
@@ -96,7 +98,7 @@ function SendMail({ setSendMail }) {
               }));
             }}
             className={styles.wrapperForm__textarea}
-            type="text"
+            name="Text"
             placeholder="Text"
             onSubmit={handleButtonClick}
           />
