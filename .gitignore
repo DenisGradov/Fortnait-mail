@@ -19,7 +19,9 @@ tt
 .env.development
 .env.test
 .env.production
-
+# Лок файлы
+package-lock.json
+yarn.lock
 # Логи
 *.log
 

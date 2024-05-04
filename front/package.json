@@ -2,6 +2,7 @@
   "name": "28-vite",
   "private": true,
   "version": "0.0.0",
+  "proxy": "https://backend.kvantomail.com",
   "type": "module",
   "scripts": {
     "dev": "vite",
