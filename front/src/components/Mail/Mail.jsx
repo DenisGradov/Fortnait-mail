@@ -21,7 +21,7 @@ function Mail() {
   useEffect(() => {
     if (token) {
       axios
-        .post("https://backend.kvantomail.com/api/verifyToken", {
+        .post(`${import.meta.env.VITE_BACKEND_URL}/api/verifyToken`, {
           token,
           login,
           loginType,

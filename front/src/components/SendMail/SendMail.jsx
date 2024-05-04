@@ -17,7 +17,7 @@ function SendMail({ setSendMail }) {
   const navigate = useNavigate();
   function handleButtonClick() {
     axios
-      .post("https://backend.kvantomail.com/api/SendMail", {
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/SendMail`, {
         token,
         login,
         loginType,

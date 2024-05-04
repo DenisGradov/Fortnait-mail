@@ -15,7 +15,7 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated }) {
   const navigate = useNavigate();
   function handleButtonClick() {
     axios
-      .post("https://backend.kvantomail.com/api/ChangePassword", {
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/ChangePassword`, {
         token,
         login,
         loginType,
@@ -42,22 +42,22 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated }) {
   return (
     <div className={styles.wrapper}>
       <div className={styles.loginForm}>
-        <RiArrowLeftCircleFill
-          className={styles.back}
-          onClick={() => {
-            setSettingsOpen(false);
-          }}
-        />
         <div className={styles.loginFormInput}>
-          <h2 className={styles.loginFormInput__inputText}>
-            Enter your password:
-          </h2>
           <form
             onSubmit={(e) => {
               e.preventDefault(); // Предотвращаем стандартное поведение формы
               handleButtonClick();
             }}
           >
+            <RiArrowLeftCircleFill
+              className={styles.back}
+              onClick={() => {
+                setSettingsOpen(false);
+              }}
+            />
+            <h2 className={styles.loginFormInput__inputText}>
+              Enter your password:
+            </h2>
             <input
               value={passwords.old}
               onChange={(e) => {
