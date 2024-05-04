@@ -1,7 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const bcrypt = require("bcrypt");
-const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const transporter = require("./transporter");
