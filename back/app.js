@@ -17,7 +17,6 @@ const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 // Для обробки JSON тіла запиту
 app.use(express.json());
 app.use(cors());
-
 // Соль для хеширования. 10 — это количество раундов генерации соли.
 const saltRounds = 10;
 
@@ -26,7 +25,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.post("/", (req, res) => {
   // Представь, что тут код для проверки логина и пароля пользователя
-  // Если проверка успешна:
   res.cookie("sessionId", "some-encrypted-session-id", {
     httpOnly: true,
     secure: true,
