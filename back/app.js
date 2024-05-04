@@ -7,6 +7,8 @@ const bodyParser = require("body-parser");
 const transporter = require("./transporter");
 require("dotenv").config({ path: "../.env" });
 
+const cors = require("cors");
+
 const domain = process.env.DOMAIN;
 console.log(domain); // виведе вашдомен.com
 
@@ -19,6 +21,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: "https://kvantomail.com",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 
