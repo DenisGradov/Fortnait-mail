@@ -15,7 +15,7 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated }) {
   const navigate = useNavigate();
   function handleButtonClick() {
     axios
-      .post("https://kvantomail.com/api/ChangePassword", {
+      .post("https://backend.kvantomail.com/api/ChangePassword", {
         token,
         login,
         loginType,

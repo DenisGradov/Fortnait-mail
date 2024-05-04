@@ -35,7 +35,7 @@ function User({ isAuthenticated, setIsAuthenticated }) {
     if (!element.viewed) {
       console.log("sss2");
       axios
-        .post("https://kvantomail.com/api/checkPost", {
+        .post("https://backend.kvantomail.com/api/checkPost", {
           token,
           login,
           loginType,
@@ -77,7 +77,7 @@ function User({ isAuthenticated, setIsAuthenticated }) {
   useEffect(() => {
     if (token) {
       axios
-        .post("https://kvantomail.com/api/getPosts", {
+        .post("https://backend.kvantomail.com/api/getPosts", {
           token,
           login,
           loginType,
