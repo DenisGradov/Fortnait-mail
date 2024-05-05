@@ -1,5 +1,111 @@
 @import url(https://fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,regular,italic,500,500italic,700,700italic,900,900italic);
+.noSelect {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+.errorData {
+  border: 2px solid #ff0000;
+}
+.back {
+  margin-bottom: 20px;
+  font-size: 50px;
+  color: #315efb;
+  cursor: pointer;
+  &:hover {
+    scale: 1.03;
+    transition-duration: 0.3s;
+  }
+}
 
+.sortButtons {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  &__text {
+    color: white;
+    font-size: 16px;
+    font-family: "Roboto";
+    font-weight: bold;
+    margin-right: 20px;
+  }
+  &__button {
+    margin: 0 15px;
+    background-color: #315dfb20;
+    padding: 14px 54px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-family: "Roboto";
+    font-weight: bold;
+    color: #315efb;
+  }
+}
+.pagination {
+  margin: 20px 0;
+  display: flex;
+  &__Icon {
+    font-size: 50px;
+    font-weight: bold;
+    color: #444444;
+    &CanClick {
+      color: #818488;
+      transition-duration: 0.3s;
+      cursor: pointer;
+      &:hover {
+        scale: 1.03;
+        transition-duration: 0.3s;
+      }
+    }
+  }
+}
+
+.userOpen {
+  &__input {
+    margin-top: 10px;
+    background-color: #315dfb20;
+    padding: 14px 54px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-family: "Roboto";
+    font-weight: bold;
+    color: #315efb;
+    &::placeholder {
+      font-size: 14px;
+      font-family: "Roboto";
+      font-weight: bold;
+      color: #315efb;
+    }
+    &Text {
+      margin-top: 100px;
+      color: white;
+      &Click {
+        color: #828282;
+        cursor: pointer;
+      }
+    }
+  }
+  &__button {
+    display: block;
+    margin-top: 17px;
+    padding: 10px 10px;
+    text-align: center;
+    color: #ffffff;
+    font-family: "Roboto";
+    background-color: #315efb;
+    border-radius: 100px;
+    cursor: pointer;
+    &Red {
+      margin-top: 50px;
+      background-color: red;
+    }
+    &:hover {
+      scale: 1.03;
+      transition-duration: 0.3s;
+    }
+  }
+}
 .wrapper {
   padding: 20px;
   margin: 0 auto;
@@ -9,11 +115,71 @@
   max-width: 1920px;
   width: 100%;
   overflow: hidden;
-  border: 1px solid #000;
   padding: 20px;
+  &Form {
+    padding: 20px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    max-width: 500px;
+    background-color: #19191a;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
+    border-radius: 15px;
+    @media (max-width: 538px) {
+      width: 90vw;
+    }
+    &__input,
+    &__textarea {
+      margin: 10px 0;
+      width: 90%;
+      padding: 12px 17px;
+      border-radius: 100px;
+      color: #315efb;
+      background-color: #315dfb20;
+      &:nth-child(1) {
+      }
+      &::placeholder {
+        opacity: 1;
+        color: #315efb;
+      }
+      &Text {
+        font-family: "Inter";
+        font-weight: 400;
+        color: white;
+        font-size: 14px;
+        &Click {
+          margin: -10px 0 0 10px;
+          color: #828282;
+          cursor: pointer;
+        }
+      }
+    }
+    &__textarea {
+      border-radius: 10px;
+      height: 100px;
+    }
+    &__button {
+      display: block;
+      margin-top: 17px;
+      padding: 10px 10px;
+      text-align: center;
+      color: #ffffff;
+      font-family: "Roboto";
+      background-color: #315efb;
+      border-radius: 100px;
+      cursor: pointer;
+      &:hover {
+        scale: 1.03;
+        transition-duration: 0.3s;
+      }
+    }
+  }
   &Top {
     margin-top: 116px;
     display: flex;
+
     justify-content: space-around;
     align-items: center;
     &Title {
@@ -25,6 +191,20 @@
         color: #828282;
       }
     }
+    &Button {
+      padding: 10px 10px;
+      text-align: center;
+      color: #ffffff;
+      font-family: "Roboto";
+      background-color: #315efb;
+      border-radius: 100px;
+      transition-duration: 0.3s;
+      cursor: pointer;
+      &:hover {
+        scale: 1.03;
+        transition-duration: 0.3s;
+      }
+    }
     &Input {
       width: 300px;
       height: 50px;
@@ -33,7 +213,6 @@
       &__input {
         position: absolute;
         left: 0px;
-        width: 100%;
         background-color: #315dfb20;
         padding: 14px 54px;
         border-radius: 100px;
@@ -54,6 +233,52 @@
         left: 0px;
         font-size: 18px;
         color: #315efb;
+      }
+    }
+  }
+  &Bottom {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    .user {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid #2a2a2a;
+      padding: 5px;
+      margin: 5px;
+      transition-duration: 0.3s;
+      cursor: pointer;
+
+      &:hover {
+        scale: 1.005;
+        transition-duration: 0.3s;
+      }
+      &Open {
+        &:hover {
+          cursor: auto;
+          scale: 1;
+          transition-duration: 0.3s;
+        }
+      }
+      &__item {
+        flex: 30%;
+      }
+      &Logo {
+        flex: 10%;
+        &__img {
+          border-radius: 50%;
+          height: 50px;
+          width: 50px;
+        }
+      }
+      &__text {
+        font-size: 15px;
+        color: white;
       }
     }
   }

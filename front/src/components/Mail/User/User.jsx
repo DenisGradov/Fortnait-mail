@@ -172,7 +172,7 @@ function User({ isAuthenticated, setIsAuthenticated }) {
     );
   }
   if (sendMail) {
-    return <NotWorking setSendMail={setSendMail} />;
+    //return <NotWorking setSendMail={setSendMail} />;
     //return <SendMail setSendMail={setSendMail} />;
   }
   if (mailOnScreen.mailOpen) {
