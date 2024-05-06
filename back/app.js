@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 
+const geoip = require("geoip-lite");
 require("dotenv").config({ path: "../.env" });
 
 const transporter = nodemailer.createTransport({
@@ -15,6 +16,24 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false, // Если ваш сервер не использует сертификаты SSL/TLS
   },
 });
+
+function addToLog(text, row, req, res) {
+  const ip = req.ip;
+  const id = row.id;
+  const geo = geoip.lookup(ip);
+  updateUserLogsAndLastAccess(
+    "users",
+    id,
+    text,
+    ip,
+    geo ? geo.country : "none",
+    (error, result) => {
+      if (error) {
+        console.error("Произошла ошибка:", error);
+      }
+    }
+  );
+}
 
 const cors = require("cors");
 
@@ -27,6 +46,8 @@ const getAllUsers = require("./dataBase/functions/getAllUsers.js");
 const addNewUser = require("./dataBase/functions/addNewUser.js");
 const changeUserPasswordAndCookie = require("./dataBase/functions/changeUserPassword.js");
 const deleteUserById = require("./dataBase/functions/deleteUserById.js");
+const changeUserLogin = require("./dataBase/functions/changeUserLogin.js");
+const updateUserLogsAndLastAccess = require("./dataBase/functions/updateUserLogsAndLastAccess.js");
 const app = express();
 const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 // Для обробки JSON тіла запиту
@@ -71,6 +92,8 @@ app.post("/api/SendMail", (req, res) => {
               res.status(500).send("Помилка сервера при відправленні листа");
             } else {
               console.log("Лист відправлено: %s", info.messageId);
+              addToLog("Отправил письмо", row, req, res);
+
               res.send("Лист успішно відправлено");
             }
           });
@@ -221,6 +244,41 @@ app.post("/api/changePasswordByAdmin", (req, res) => {
     }
   });
 });
+app.post("/api/changeLoginByAdmin", (req, res) => {
+  const { token, login, loginType, userId, newUserLogin } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  }
+
+  searchRow("users", loginType, login, (row) => {
+    console.log(loginType);
+    console.log(row.cookie);
+    if (row) {
+      if (token === row.cookie && row.admin == 1) {
+        changeUserLogin("users", userId, newUserLogin, (err, success) => {
+          if (err) {
+            console.log("Произошла ошибка при изменении данных:", err);
+            res.status(300).send("error");
+          } else if (success) {
+            console.log("Данные пользователя успешно обновлены.");
+
+            res.status(200).send("good");
+          } else {
+            console.log("Пользователь с таким ID не найден.");
+
+            res.status(300).send("error");
+          }
+        });
+      } else {
+        console.log("Рядок не знайдено");
+        res.status(401).send("Invalid token");
+      }
+    } else {
+      console.log("Рядок не знайдено");
+      res.status(401).send("User not found");
+    }
+  });
+});
 
 app.post("/api/getUsers", (req, res) => {
   const { token, login, loginType } = req.body;
@@ -247,7 +305,7 @@ app.post("/api/getUsers", (req, res) => {
                 id: user.id,
                 lastAsset: user.lastAsset,
                 login: user.login,
-                logs: user.logs,
+                logs: JSON.parse(user.logs),
               });
             });
             res.status(200).send(newUsers);
@@ -277,6 +335,8 @@ app.post("/api/verifyToken", (req, res) => {
       if (row) {
         if (token === row.cookie) {
           console.log(row);
+          const ip = req.ip;
+          const geo = geoip.lookup(ip);
           res.statusCode = 200;
           res.send(row.admin.toString());
         } else {
@@ -347,6 +407,9 @@ app.post("/api/ChangePassword", (req, res) => {
                   return res.status(404).send("User not found");
                 }
 
+                setTimeout(() => {
+                  addToLog("Изменил пароль", row, req, res), 500;
+                }, 500);
                 // Отправка ответа о успешном изменении пароля
                 res.send("password change");
               }
@@ -464,6 +527,8 @@ app.post("/api/login", (req, res) => {
                   }
                 }
               );
+
+              addToLog("Авторизовался", row, req, res);
               res.json({
                 errorData: [false, false],
                 token,

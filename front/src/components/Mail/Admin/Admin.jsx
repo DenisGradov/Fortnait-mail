@@ -1,5 +1,5 @@
-const CLICKS_FOR_DELEATE_USER = 1;
 const MAX_USERS_ON_PAGE = 9;
+
 import { useEffect, useState } from "react";
 import styles from "./admin.module.scss";
 import axios from "axios";
@@ -10,6 +10,9 @@ import {
   RiArrowRightSLine,
   RiSearchLine,
 } from "react-icons/ri";
+import UserLogs from "./UserLogs";
+import formatDateOrTime from "../../../functions/formatDateOrTime";
+import generatePassword from "../../../functions/generatePassword";
 function Admin() {
   const [users, setUsers] = useState([]);
   const [userInfo, setUserInfo] = useState({
@@ -17,7 +20,9 @@ function Admin() {
     id: 0,
     clickForDeleateUser: 0,
     password: "",
+    login: "",
     errorPassword: false,
+    errorLogin: false,
   });
   useEffect(() => {
     setUserInfo((prevUserInfo) => ({
@@ -110,18 +115,6 @@ function Admin() {
     });
     return find;
   }
-  function generatePassword() {
-    const length = Math.floor(Math.random() * 3) + 6; // Генерируем длину от 6 до 8 символов
-    const charset =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let password = "";
-
-    for (let i = 0; i < length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
-
-    return password;
-  }
 
   function handleUpdateInput(e) {
     setSearchInput(e.target.value);
@@ -195,74 +188,7 @@ function Admin() {
       });
     console.log("asdasdasd");
   }
-  function handleChangeUser() {
-    if (userInfo.password.length == 0) {
-      setUserInfo((prevAddUser) => ({ ...prevAddUser, errorPassword: true }));
-      return;
-    }
 
-    axios
-      .post(`${import.meta.env.VITE_BACKEND_URL}/api/changePasswordByAdmin`, {
-        token,
-        login,
-        loginType,
-        userId: userInfo.id,
-        newUserPassword: userInfo.password,
-      })
-      .then((response) => {
-        console.log(response.data);
-        if (response.data == "good") {
-          alert("Пароль изменен!");
-        }
-      })
-      .catch((error) => {
-        console.error("Token validation failed", error);
-
-        if (error.response) {
-          if (error.response.status === 401) {
-            //setErrorInfo(true);
-          }
-        }
-      });
-    console.log("asdasdasd");
-  }
-  function handleDeleateUser() {
-    //CLICKS_FOR_DELEATE_USER
-    const newUserInfo = { ...userInfo };
-    newUserInfo.clickForDeleateUser++;
-    if (newUserInfo.clickForDeleateUser == CLICKS_FOR_DELEATE_USER) {
-      axios
-        .post(`${import.meta.env.VITE_BACKEND_URL}/api/deleateUser`, {
-          token,
-          login,
-          loginType,
-          userId: userInfo.id,
-        })
-        .then((response) => {
-          console.log(response.data);
-          if (response.data == "good") {
-            setUserInfo((prevUserInfo) => ({ ...prevUserInfo, state: false }));
-            setTimeout(updateUsers, 100);
-          }
-        })
-        .catch((error) => {
-          console.error("Token validation failed", error);
-
-          if (error.response) {
-            if (error.response.status === 401) {
-              //setErrorInfo(true);
-            }
-          }
-        });
-    } else {
-      alert(
-        `Для удаления юзера нажми на кнопку еще ${
-          CLICKS_FOR_DELEATE_USER - newUserInfo.clickForDeleateUser
-        } раз(а)`
-      );
-      setUserInfo(newUserInfo);
-    }
-  }
   function updateUsers() {
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/api/getUsers`, {
@@ -291,85 +217,13 @@ function Admin() {
     }
     console.log(user.id);
     return (
-      <div className={styles.wrapper}>
-        <RiArrowLeftCircleFill
-          className={styles.back}
-          onClick={() =>
-            setUserInfo((prevSet) => ({ ...prevSet, state: false }))
-          }
-        />
-        <div className={styles.wrapperBottom}>
-          {" "}
-          <div
-            onClick={() => {
-              setUserInfo((prevUserInfo) => ({
-                ...prevUserInfo,
-                state: true,
-                id: user.id,
-              }));
-            }}
-            className={`${styles.userOpen} ${styles.user}`}
-          >
-            <div className={`${styles.userLogo} ${styles.user__item}`}>
-              <img
-                src={user.admin == "1" ? "/god.jpg" : "/mamont.jpg"}
-                className={`${styles.userLogo__img} ${styles.user__item}`}
-              />
-            </div>
-            <h2 className={`${styles.user__text} ${styles.user__item}`}>
-              {user.email}
-            </h2>
-            <h2 className={`${styles.user__text} ${styles.user__item}`}>
-              {user.login}
-            </h2>
-            <h2 className={`${styles.user__text} ${styles.user__item}`}>
-              {user.lastAsset == "none" ? "Не заходил" : user.lastAsset}
-            </h2>
-          </div>
-          <h2 className={styles.userOpen__inputText}>Новый пароль юзера</h2>
-          <input
-            value={userInfo.password}
-            onChange={(e) => {
-              setUserInfo((prevInfo) => ({
-                ...prevInfo,
-                password: e.target.value,
-              }));
-            }}
-            className={`${styles.userOpen__input} ${
-              userInfo.errorPassword ? styles.errorData : ""
-            }`}
-            type="text"
-            placeholder="password"
-          />
-          <h2
-            onClick={() => {
-              setUserInfo((prevInfo) => ({
-                ...prevInfo,
-                password: generatePassword(),
-              }));
-            }}
-            className={`${styles.userOpen__inputTextClick} ${styles.noSelect}`}
-          >
-            рандомный
-          </h2>
-          <button
-            onClick={handleChangeUser}
-            className={styles.userOpen__button}
-          >
-            Изменить юзеру пароль
-          </button>
-          {user.admin != 1 ? (
-            <button
-              onClick={handleDeleateUser}
-              className={`${styles.userOpen__button} ${styles.userOpen__buttonRed}`}
-            >
-              Удалить юзера
-            </button>
-          ) : (
-            ""
-          )}
-        </div>
-      </div>
+      <UserLogs
+        user={user}
+        users={users}
+        setUsers={setUsers}
+        userInfo={userInfo}
+        setUserInfo={setUserInfo}
+      />
     );
   }
   if (addUser.state) {
@@ -555,7 +409,9 @@ function Admin() {
                 {user.login}
               </h2>
               <h2 className={`${styles.user__text} ${styles.user__item}`}>
-                {user.lastAsset == "none" ? "Не заходил" : user.lastAsset}
+                {user.lastAsset == "none"
+                  ? "Не заходил"
+                  : formatDateOrTime(user.lastAsset)}
               </h2>
             </div>
           );

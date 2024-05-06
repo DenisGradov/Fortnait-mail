@@ -24,6 +24,11 @@
   align-items: center;
   width: 100%;
   flex-wrap: wrap;
+
+  @media (max-width: 851px) {
+    display: flex;
+    flex-direction: column;
+  }
   &__text {
     color: white;
     font-size: 16px;
@@ -40,6 +45,9 @@
     font-family: "Roboto";
     font-weight: bold;
     color: #315efb;
+    @media (max-width: 851px) {
+      margin: 5px;
+    }
   }
 }
 .pagination {
@@ -182,6 +190,11 @@
 
     justify-content: space-around;
     align-items: center;
+
+    @media (max-width: 470px) {
+      display: flex;
+      flex-direction: column;
+    }
     &Title {
       color: white;
       font-size: 24px;
@@ -200,6 +213,9 @@
       border-radius: 100px;
       transition-duration: 0.3s;
       cursor: pointer;
+      @media (max-width: 470px) {
+        margin-top: 10px;
+      }
       &:hover {
         scale: 1.03;
         transition-duration: 0.3s;
@@ -236,50 +252,85 @@
       }
     }
   }
-  &Bottom {
+  &Block {
     margin: 0 auto;
+    padding: 10px 10px;
+    display: flex;
+    justify-content: center;
+    border: 1px solid #444444;
+    @media (max-width: 520px) {
+      flex-direction: column;
+    }
+    &Logs {
+      margin: 10px;
+      border: 1px solid #000;
+      &Items {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        &Item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          margin: 5px 5px;
+          border: 1px solid #818488;
+          &__item {
+            color: white;
+          }
+        }
+      }
+    }
+  }
+  &Bottom {
+    margin: 10px;
+    border: 1px solid #000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    .user {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid #2a2a2a;
-      padding: 5px;
-      margin: 5px;
-      transition-duration: 0.3s;
-      cursor: pointer;
+  }
+}
 
-      &:hover {
-        scale: 1.005;
-        transition-duration: 0.3s;
-      }
-      &Open {
-        &:hover {
-          cursor: auto;
-          scale: 1;
-          transition-duration: 0.3s;
-        }
-      }
-      &__item {
-        flex: 30%;
-      }
-      &Logo {
-        flex: 10%;
-        &__img {
-          border-radius: 50%;
-          height: 50px;
-          width: 50px;
-        }
-      }
-      &__text {
-        font-size: 15px;
-        color: white;
-      }
+.user {
+  width: 90%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #2a2a2a;
+  padding: 5px;
+  margin: 5px auto;
+  transition-duration: 0.3s;
+  cursor: pointer;
+  @media (max-width: 1040px) {
+    display: flex;
+    flex-direction: column;
+  }
+  &:hover {
+    scale: 1.005;
+    transition-duration: 0.3s;
+  }
+  &Open {
+    &:hover {
+      cursor: auto;
+      scale: 1;
+      transition-duration: 0.3s;
     }
+  }
+  &__item {
+    flex: 30%;
+  }
+  &Logo {
+    flex: 10%;
+    &__img {
+      border-radius: 50%;
+      height: 50px;
+      width: 50px;
+    }
+  }
+  &__text {
+    font-size: 15px;
+    color: white;
   }
 }
