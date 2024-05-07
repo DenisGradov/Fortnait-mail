@@ -209,8 +209,6 @@ app.post("/api/changePasswordByAdmin", (req, res) => {
   }
 
   searchRow("users", loginType, login, (row) => {
-    console.log(loginType);
-    console.log(row.cookie);
     if (row) {
       if (token === row.cookie && row.admin == 1) {
         bcrypt.hash(newUserPassword, 10, (err, hash) => {
