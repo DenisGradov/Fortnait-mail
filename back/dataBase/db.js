@@ -21,8 +21,19 @@ function writeInDb() {
         received: [],
       });
       db.run(
-        "INSERT INTO users (email, login, password, admin, logs, posts, cookie,lastAsset ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        ["admin@kvantomail.com", "admin", hash, "0", "", posts, "", "none"],
+        "INSERT INTO users (email, login, password, admin, logs, posts, cookie,lastAsset, adminMessage, blocked ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          "admin@kvantomail.com",
+          "admin",
+          hash,
+          "0",
+          "",
+          posts,
+          "",
+          "none",
+          "",
+          "0",
+        ],
         function (err) {
           if (err) {
             console.error("Ошибка при записи в базу данных:", err);

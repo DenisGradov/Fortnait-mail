@@ -14,8 +14,19 @@ function addNewUser(login, email, password) {
         received: [],
       });
       db.run(
-        "INSERT INTO users (email, login, password, admin, logs, posts, cookie,lastAsset ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        [email, login, hash, "0", JSON.stringify([]), posts, "", "none"],
+        "INSERT INTO users (email, login, password, admin, logs, posts, cookie,lastAsset, adminMessage, blocked ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+          email,
+          login,
+          hash,
+          "0",
+          JSON.stringify([]),
+          posts,
+          "",
+          "none",
+          "",
+          "0",
+        ],
         function (err) {
           if (err) {
             allGood = false;
