@@ -136,6 +136,7 @@ app.post("/api/AddNewUser", (req, res) => {
     newUserEmail,
     newUserLogin,
     newUserPassword,
+    adminStatus,
   } = req.body;
   if (token == "undefined") {
     return res.status(401).send("Token is required");
@@ -149,7 +150,8 @@ app.post("/api/AddNewUser", (req, res) => {
         const writeSucsess = addNewUser(
           newUserLogin,
           newUserEmail,
-          newUserPassword
+          newUserPassword,
+          adminStatus
         );
         if (writeSucsess) {
           res.status(200).send("good");

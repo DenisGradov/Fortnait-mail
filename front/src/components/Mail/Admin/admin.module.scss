@@ -144,6 +144,11 @@
       color: #315efb;
       background-color: #315dfb20;
     }
+    &__checboxBlock {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+    }
     &__input,
     &__textarea {
       margin: 10px 0;
@@ -152,7 +157,15 @@
       border-radius: 100px;
       color: #315efb;
       background-color: #315dfb20;
-
+      &checkbox {
+        position: relative;
+        margin: 10px 0;
+        margin-left: 10px;
+        padding: 12px 17px;
+        border-radius: 100px;
+        color: #315efb;
+        background-color: #315dfb20;
+      }
       &:nth-child(1) {
       }
       &::placeholder {

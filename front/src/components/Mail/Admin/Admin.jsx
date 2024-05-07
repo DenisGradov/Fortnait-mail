@@ -33,6 +33,9 @@ function Admin() {
   const [addUser, setAddUser] = useState({
     state: false,
     email: "",
+    admin: false,
+    admin2: false,
+    admin3: false,
     login: "",
     password: "",
     emailType: import.meta.env.VITE_EMAIL_DOMEN.split(",").map((domain) =>
@@ -164,6 +167,7 @@ function Admin() {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorLogin: true }));
       return;
     }
+    alert(addUser.admin && addUser.admin2 && addUser.admin3);
 
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/api/AddNewUser`, {
@@ -173,6 +177,7 @@ function Admin() {
         newUserEmail: `${addUser.email}@${addUser.emailType}`,
         newUserLogin: addUser.login,
         newUserPassword: addUser.password,
+        adminStatus: addUser.admin && addUser.admin2 && addUser.admin3,
       })
       .then((response) => {
         console.log(response.data);
@@ -337,6 +342,43 @@ function Admin() {
           >
             рандомный
           </h2>
+          <div className={styles.wrapperForm__checboxBlock}>
+            <h2 className={styles.wrapperForm__inputText}>Выдать админку</h2>
+
+            <input
+              type="checkbox"
+              checked={addUser.admin}
+              className={`${styles.wrapperForm__inputcheckbox} `}
+              onClick={() => {
+                setAddUser((prevInfo) => ({
+                  ...prevInfo,
+                  admin: !prevInfo.admin,
+                }));
+              }}
+            />
+            <input
+              type="checkbox"
+              checked={addUser.admin2}
+              className={`${styles.wrapperForm__inputcheckbox} `}
+              onClick={() => {
+                setAddUser((prevInfo) => ({
+                  ...prevInfo,
+                  admin2: !prevInfo.admin2,
+                }));
+              }}
+            />
+            <input
+              type="checkbox"
+              checked={addUser.admin3}
+              className={`${styles.wrapperForm__inputcheckbox} `}
+              onClick={() => {
+                setAddUser((prevInfo) => ({
+                  ...prevInfo,
+                  admin3: !prevInfo.admin3,
+                }));
+              }}
+            />
+          </div>
 
           <button
             onClick={handleCreateUser}

@@ -1,7 +1,7 @@
 const sqlite3 = require("sqlite3").verbose();
 const bcrypt = require("bcrypt");
 
-function addNewUser(login, email, password) {
+function addNewUser(login, email, password, adminStatus) {
   let allGood = true;
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) {
@@ -19,7 +19,7 @@ function addNewUser(login, email, password) {
           email,
           login,
           hash,
-          "0",
+          adminStatus ? "1" : "0",
           JSON.stringify([]),
           posts,
           "",
