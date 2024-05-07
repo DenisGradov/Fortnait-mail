@@ -35,6 +35,9 @@ function Admin() {
     email: "",
     login: "",
     password: "",
+    emailType: import.meta.env.VITE_EMAIL_DOMEN.split(",").map((domain) =>
+      domain.trim()
+    )[0],
     errorLogin: false,
     errorEmail: false,
     errorPassword: false,
@@ -102,14 +105,21 @@ function Admin() {
   const loginType = useCookie("type");
   function checkLogin(e, whear) {
     let find = false;
-    let text =
-      whear == "email"
-        ? `${e.target.value}@${import.meta.env.VITE_EMAIL_DOMEN}`
-        : e.target.value;
+    let text = "";
+    if (whear == "emailType") {
+      text = addUser.email + "@" + e.target.value;
+      whear = "email";
+    } else if (whear == "email") {
+      text = `${e.target.value}@${addUser.emailType}`;
+    } else {
+      text = e.target.value;
+    }
+
     users.forEach((element) => {
       console.log(text);
       console.log(element[whear]);
       if (element[whear] == text) {
+        console.log(`${text} ${element[whear]}`);
         find = true;
       }
     });
@@ -142,7 +152,7 @@ function Admin() {
       setCurrentPage(currentPage - 1);
     }
   };
-
+  console.log(addUser.emailType);
   function handleCreateUser() {
     if (addUser.password.length == 0) {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorPassword: true }));
@@ -160,7 +170,7 @@ function Admin() {
         token,
         login,
         loginType,
-        newUserEmail: `${addUser.email}@${import.meta.env.VITE_EMAIL_DOMEN}`,
+        newUserEmail: `${addUser.email}@${addUser.emailType}`,
         newUserLogin: addUser.login,
         newUserPassword: addUser.password,
       })
@@ -241,8 +251,34 @@ function Admin() {
               setAddUser((prevSet) => ({ ...prevSet, state: false }))
             }
           />
+          <h2 className={styles.wrapperForm__inputText}>Выбери почту юзеру</h2>
+          <select
+            className={styles.wrapperForm__select}
+            value={addUser.emailType}
+            onChange={(e) => {
+              setAddUser((prevInfo) => ({
+                ...prevInfo,
+                emailType: e.target.value,
+                errorEmail: checkLogin(e, "emailType"),
+              }));
+            }}
+            id="languages"
+          >
+            {import.meta.env.VITE_EMAIL_DOMEN.split(",")
+              .map((domain) => domain.trim())
+              .map((domain, index) => {
+                return (
+                  <option key={`option${index}`} value={domain}>
+                    {domain}
+                  </option>
+                );
+              })}
+          </select>
           <h2 className={styles.wrapperForm__inputText}>
-            Эмаил юзера (без @{import.meta.env.VITE_EMAIL_DOMEN})
+            Эмаил юзера (без @domen.com)
+            {
+              //{import.meta.env.VITE_EMAIL_DOMEN}
+            }
           </h2>
           <input
             value={addUser.email}

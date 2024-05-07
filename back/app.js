@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 });
 
 function addToLog(text, row, req, res) {
-  const ip = req.ip;
+  const ip = req.headers["x-forwarded-for"];
   const id = row.id;
   const geo = geoip.lookup(ip);
   updateUserLogsAndLastAccess(

@@ -41,6 +41,7 @@ function Login({ isAuthenticated, setIsAuthenticated }) {
         : true
     ) {
       console.log(capcha);
+      alert("Captcha solved incorrectly");
       return;
     }
     const myObject = { formData, checkbox };

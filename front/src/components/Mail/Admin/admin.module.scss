@@ -122,7 +122,6 @@
   justify-content: center;
   max-width: 1920px;
   width: 100%;
-  overflow: hidden;
   padding: 20px;
   &Form {
     padding: 20px;
@@ -138,6 +137,13 @@
     @media (max-width: 538px) {
       width: 90vw;
     }
+    &__select {
+      margin: 10px 0;
+      padding: 12px 17px;
+      border-radius: 100px;
+      color: #315efb;
+      background-color: #315dfb20;
+    }
     &__input,
     &__textarea {
       margin: 10px 0;
@@ -146,6 +152,7 @@
       border-radius: 100px;
       color: #315efb;
       background-color: #315dfb20;
+
       &:nth-child(1) {
       }
       &::placeholder {
@@ -286,9 +293,10 @@
   &Bottom {
     margin: 10px;
     border: 1px solid #000;
+    max-height: 50vh;
+    overflow-y: scroll;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
   }
 }
