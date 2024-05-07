@@ -26,7 +26,7 @@ function writeInDb() {
           "admin@kvantomail.com",
           "admin",
           hash,
-          "0",
+          "1",
           "",
           posts,
           "",
