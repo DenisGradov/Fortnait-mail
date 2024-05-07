@@ -27,7 +27,7 @@ function writeInDb() {
           "admin",
           hash,
           "1",
-          "",
+          "[]",
           posts,
           "",
           "none",
