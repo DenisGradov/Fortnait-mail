@@ -5,13 +5,13 @@ function createDb() {
   const db = new sqlite3.Database("./dataBase/mydatabase.db");
   db.serialize(function () {
     db.run(
-      "CREATE TABLE if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, login TEXT, password TEXT, admin INTEGER,logs TEXT, posts TEXT, cookie TEXT, lastAsset TEXT)"
+      "CREATE TABLE if not exists users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, login TEXT, password TEXT, admin INTEGER,logs TEXT, posts TEXT, cookie TEXT, lastAsset TEXT, adminMessage TEXT, blocked TEXT)"
     );
   });
   db.close();
 }
 function writeInDb() {
-  bcrypt.hash("Arfar1754", 10, (err, hash) => {
+  bcrypt.hash("admin", 10, (err, hash) => {
     if (err) {
       console.error("Ошибка при хешировании:", err);
     } else {
@@ -22,16 +22,7 @@ function writeInDb() {
       });
       db.run(
         "INSERT INTO users (email, login, password, admin, logs, posts, cookie,lastAsset ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        [
-          "IslamAliev2008@kvantomail.com",
-          "IslamAliev",
-          hash,
-          "0",
-          "",
-          posts,
-          "",
-          "none",
-        ],
+        ["admin@kvantomail.com", "admin", hash, "0", "", posts, "", "none"],
         function (err) {
           if (err) {
             console.error("Ошибка при записи в базу данных:", err);
