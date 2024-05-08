@@ -1,6 +1,6 @@
 const MAX_USERS_ON_PAGE = 9;
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./admin.module.scss";
 import axios from "axios";
 import useCookie from "../../../hooks/useCookie";
@@ -8,6 +8,7 @@ import {
   RiArrowLeftCircleFill,
   RiArrowLeftSLine,
   RiArrowRightSLine,
+  RiRestartLine,
   RiSearchLine,
 } from "react-icons/ri";
 import UserLogs from "./UserLogs";
@@ -31,6 +32,7 @@ function Admin() {
       clickForDeleateUser: 0,
     }));
   }, [userInfo.state, userInfo.id]);
+  const intervalRef = useRef(null);
   const [addUser, setAddUser] = useState({
     state: false,
     email: "",
@@ -283,9 +285,11 @@ function Admin() {
         console.error("Error when send posts", error);
       });
   }
-
   useEffect(() => {
-    updateUsers();
+    updateUsers(); // Вызываем функцию сразу при монтировании
+    intervalRef.current = setInterval(updateUsers, 15000); // Установка интервала на 15 секунд
+
+    return () => clearInterval(intervalRef.current); // Очистка интервала при размонтировании компонента
   }, []);
 
   if (userInfo.state) {
@@ -535,6 +539,10 @@ function Admin() {
             canNext ? styles.pagination__IconCanClick : ""
           }`}
           disabled={!canPrev}
+        />
+        <RiRestartLine
+          onClick={updateUsers}
+          className={`${styles.pagination__Icon} ${styles.noSelect} ${styles.pagination__IconCanClick}`}
         />
         <div className={styles.wrapperTopInput}>
           <input
