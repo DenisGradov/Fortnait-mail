@@ -13,7 +13,6 @@ tt
 # Отчеты о покрытии кода
 /coverage/
 
-back/dataBase/mydatabase.db
 node_modules/
 back/node_modules/
 front/node_modules/
