@@ -167,7 +167,6 @@ function Admin() {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorLogin: true }));
       return;
     }
-    alert(addUser.admin && addUser.admin2 && addUser.admin3);
 
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/api/AddNewUser`, {

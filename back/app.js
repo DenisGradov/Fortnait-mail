@@ -344,6 +344,9 @@ app.post("/api/verifyToken", (req, res) => {
           res.statusCode = 401;
           res.send("don't good");
         }
+      } else {
+        res.statusCode = 401;
+        res.send("don't good");
       }
     });
   }
