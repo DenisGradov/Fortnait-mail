@@ -48,6 +48,7 @@ const changeUserPasswordAndCookie = require("./dataBase/functions/changeUserPass
 const deleteUserById = require("./dataBase/functions/deleteUserById.js");
 const changeUserLogin = require("./dataBase/functions/changeUserLogin.js");
 const updateUserLogsAndLastAccess = require("./dataBase/functions/updateUserLogsAndLastAccess.js");
+const updateUserLastAccest = require("./dataBase/functions/updateUserLastAccest.js");
 const app = express();
 const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 // Для обробки JSON тіла запиту
