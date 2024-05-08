@@ -14,7 +14,7 @@ import useCookie from "../../../hooks/useCookie";
 import SendMail from "../../SendMail/SendMail";
 import NotWorking from "../../NotWorking/NotWorking";
 
-function User({ isAuthenticated, setIsAuthenticated }) {
+function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
   const [posts, setPosts] = useState({ sent: [], received: [] });
   const [sendMail, setSendMail] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -168,6 +168,7 @@ function User({ isAuthenticated, setIsAuthenticated }) {
       <UserSettings
         setSettingsOpen={setSettingsOpen}
         setIsAuthenticated={setIsAuthenticated}
+        userEmail={userEmail}
       />
     );
   }

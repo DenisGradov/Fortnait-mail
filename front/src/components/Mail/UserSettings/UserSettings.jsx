@@ -4,7 +4,7 @@ import { RiArrowLeftCircleFill } from "react-icons/ri";
 import axios from "axios";
 import useCookie from "../../../hooks/useCookie";
 import { useNavigate } from "react-router-dom";
-function UserSettings({ setSettingsOpen, setIsAuthenticated }) {
+function UserSettings({ setSettingsOpen, setIsAuthenticated, userEmail }) {
   const [passwords, setPasswords] = useState({ old: "", new: "" });
 
   const [errorInfo, setErrorInfo] = useState(false);
@@ -55,6 +55,9 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated }) {
                 setSettingsOpen(false);
               }}
             />
+            <h2 className={styles.loginFormInput__inputText}>
+              Your email is: {userEmail}
+            </h2>
             <h2 className={styles.loginFormInput__inputText}>
               Enter your password:
             </h2>

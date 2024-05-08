@@ -181,13 +181,21 @@ function Admin() {
       .then((response) => {
         console.log(response.data);
         if (response.data == "good") {
-          setAddUser((prevAddUser) => ({
-            ...prevAddUser,
+          setAddUser({
             state: false,
-            password: "",
-            login: "",
             email: "",
-          }));
+            admin: false,
+            admin2: false,
+            admin3: false,
+            login: "",
+            password: "",
+            emailType: import.meta.env.VITE_EMAIL_DOMEN.split(",").map(
+              (domain) => domain.trim()
+            )[0],
+            errorLogin: false,
+            errorEmail: false,
+            errorPassword: false,
+          });
           setTimeout(updateUsers, 100);
         }
       })

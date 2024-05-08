@@ -338,7 +338,7 @@ app.post("/api/verifyToken", (req, res) => {
           const ip = req.ip;
           const geo = geoip.lookup(ip);
           res.statusCode = 200;
-          res.send(row.admin.toString());
+          res.json({ status: row.admin.toString(), mail: row.email });
         } else {
           console.log("Рядок не знайдено");
           res.statusCode = 401;

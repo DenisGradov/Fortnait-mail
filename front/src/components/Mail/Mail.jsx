@@ -9,7 +9,10 @@ import useCookie from "../../hooks/useCookie";
 function Mail() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [checkCookieOnBack, setCheckCookieOnBack] = useState(false);
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState({
+    status: true,
+    email: "",
+  });
   const navigate = useNavigate();
 
   const token = useCookie("authToken");
@@ -28,8 +31,10 @@ function Mail() {
         })
         .then((response) => {
           setIsAuthenticated(true);
-          if (response.data == "1") {
-            setUser(false);
+          if (response.data.status == "1") {
+            setUser({ status: true, email: response.data.email });
+          } else {
+            setUser({ status: false, email: response.data.email });
           }
           setCheckCookieOnBack(true);
         })
@@ -49,10 +54,11 @@ function Mail() {
   return (
     <>
       {isAuthenticated ? (
-        user ? (
+        user.status ? (
           <User
             isAuthenticated={isAuthenticated}
             setIsAuthenticated={setIsAuthenticated}
+            userEmail={user.email}
           />
         ) : (
           <Admin />
