@@ -117,6 +117,11 @@ app.post("/api/getPosts", (req, res) => {
       console.log(row.cookie);
       if (row) {
         if (token === row.cookie) {
+          updateUserLastAccest("users", row.id, (error, result) => {
+            if (error) {
+              console.error("Произошла ошибка:", error);
+            }
+          });
           res.json(JSON.parse(row.posts));
         } else {
           console.log("Рядок не знайдено");
@@ -154,6 +159,11 @@ app.post("/api/AddNewUser", (req, res) => {
           adminStatus
         );
         if (writeSucsess) {
+          updateUserLastAccest("users", row.id, (error, result) => {
+            if (error) {
+              console.error("Произошла ошибка:", error);
+            }
+          });
           res.status(200).send("good");
         } else {
           console.log("какая-то ошибка при записи в бд");
@@ -187,6 +197,12 @@ app.post("/api/deleateUser", (req, res) => {
             res.status(300).send("error");
           } else if (success) {
             console.log("Пользователь успешно удален.");
+
+            updateUserLastAccest("users", row.id, (error, result) => {
+              if (error) {
+                console.error("Произошла ошибка:", error);
+              }
+            });
             res.status(200).send("good");
           } else {
             console.log("Пользователь с таким ID не найден.");
@@ -224,6 +240,11 @@ app.post("/api/changePasswordByAdmin", (req, res) => {
               console.log("Произошла ошибка при изменении данных:", err);
               res.status(300).send("error");
             } else if (success) {
+              updateUserLastAccest("users", row.id, (error, result) => {
+                if (error) {
+                  console.error("Произошла ошибка:", error);
+                }
+              });
               console.log("Данные пользователя успешно обновлены.");
 
               res.status(200).send("good");
@@ -262,6 +283,11 @@ app.post("/api/changeLoginByAdmin", (req, res) => {
           } else if (success) {
             console.log("Данные пользователя успешно обновлены.");
 
+            updateUserLastAccest("users", row.id, (error, result) => {
+              if (error) {
+                console.error("Произошла ошибка:", error);
+              }
+            });
             res.status(200).send("good");
           } else {
             console.log("Пользователь с таким ID не найден.");
@@ -308,6 +334,11 @@ app.post("/api/getUsers", (req, res) => {
                 logs: JSON.parse(user.logs),
               });
             });
+            updateUserLastAccest("users", row.id, (error, result) => {
+              if (error) {
+                console.error("Произошла ошибка:", error);
+              }
+            });
             res.status(200).send(newUsers);
           } else {
             console.log("Користувачі не знайдені.");
@@ -337,6 +368,11 @@ app.post("/api/verifyToken", (req, res) => {
           console.log(row);
           const ip = req.ip;
           const geo = geoip.lookup(ip);
+          updateUserLastAccest("users", row.id, (error, result) => {
+            if (error) {
+              console.error("Произошла ошибка:", error);
+            }
+          });
           res.statusCode = 200;
           res.json({ status: row.admin.toString(), email: row.email });
         } else {
@@ -458,6 +494,11 @@ app.post("/api/checkPost", (req, res) => {
                 console.error("Помилка оновлення:", err);
                 res.status(500).send("Server error");
               } else if (result.changes > 0) {
+                updateUserLastAccest("users", row.id, (error, result) => {
+                  if (error) {
+                    console.error("Произошла ошибка:", error);
+                  }
+                });
                 res.json(updatedPosts); // Отправляем полный объект posts на фронтенд
               } else {
                 console.log("Рядок для оновлення не знайдено.");
