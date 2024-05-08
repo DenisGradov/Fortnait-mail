@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./user.module.scss";
 import axios from "axios";
 import {
   RiArrowLeftCircleFill,
   RiArrowLeftSLine,
   RiArrowRightSLine,
+  RiRestartLine,
   RiSearchLine,
   RiSettings3Line,
 } from "react-icons/ri";
@@ -20,6 +21,7 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [filteredPosts, setFilteredPosts] = useState([]);
 
+  const intervalRef = useRef(null);
   const [searchInput, setSearchInput] = useState("");
   const [mailOnScreen, setMailOnScreen] = useState({
     numerPage: 0,
@@ -76,6 +78,11 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
   const postsPerPage = 50;
   const maxPage = Math.ceil(totalPosts / postsPerPage) - 1;
   useEffect(() => {
+    intervalRef.current = setInterval(getPosts, 15000); // Установка интервала на 15 секунд
+
+    return () => clearInterval(intervalRef.current); // Очистка интервала
+  }, []);
+  function getPosts() {
     if (token) {
       axios
         .post(`${import.meta.env.VITE_BACKEND_URL}/api/getPosts`, {
@@ -97,6 +104,9 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
     } else {
       setIsAuthenticated(false);
     }
+  }
+  useEffect(() => {
+    getPosts();
   }, []);
 
   useEffect(() => {
@@ -229,7 +239,10 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
           >
             Send mail
           </h2>
-
+          <RiRestartLine
+            onClick={getPosts}
+            className={`${styles.pagination__Icon} ${styles.noSelect} ${styles.pagination__IconCanClick}`}
+          />
           <div className={styles.topMenuSearch}>
             <input
               value={searchInput}

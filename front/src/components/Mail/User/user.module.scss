@@ -7,6 +7,24 @@
 body {
   background-color: #19191a;
 }
+.pagination {
+  margin: 20px 0;
+  display: flex;
+  &__Icon {
+    font-size: 30px;
+    font-weight: bold;
+    color: #444444;
+    &CanClick {
+      color: #818488;
+      transition-duration: 0.3s;
+      cursor: pointer;
+      &:hover {
+        scale: 1.03;
+        transition-duration: 0.3s;
+      }
+    }
+  }
+}
 .headerAdminMessage {
   &Big,
   &Small {

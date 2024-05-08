@@ -123,12 +123,23 @@
   max-width: 1920px;
   width: 100%;
   padding: 20px;
-  &Form {
-    padding: 20px;
+  &AddUser {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    &__or {
+      text-align: center;
+      padding: 20px;
+      width: 100%;
+      font-family: "Inter";
+      font-weight: bold;
+      color: white;
+      font-size: 20px;
+    }
+  }
+  &Form {
+    padding: 20px;
     width: 100%;
     max-width: 500px;
     background-color: #19191a;

@@ -13,6 +13,7 @@ import {
 import UserLogs from "./UserLogs";
 import formatDateOrTime from "../../../functions/formatDateOrTime";
 import generatePassword from "../../../functions/generatePassword";
+import parseMailInText from "../../../functions/parseMailInText";
 function Admin() {
   const [users, setUsers] = useState([]);
   const [userInfo, setUserInfo] = useState({
@@ -36,6 +37,7 @@ function Admin() {
     admin: false,
     admin2: false,
     admin3: false,
+    allData: "",
     login: "",
     password: "",
     emailType: import.meta.env.VITE_EMAIL_DOMEN.split(",").map((domain) =>
@@ -44,6 +46,7 @@ function Admin() {
     errorLogin: false,
     errorEmail: false,
     errorPassword: false,
+    errorAllData: false,
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({
@@ -109,18 +112,60 @@ function Admin() {
   function checkLogin(e, whear) {
     let find = false;
     let text = "";
+    const allData = {
+      login: "",
+      domain: "",
+      password: "",
+      email: "",
+    };
     if (whear == "emailType") {
       text = addUser.email + "@" + e.target.value;
       whear = "email";
     } else if (whear == "email") {
       text = `${e.target.value}@${addUser.emailType}`;
+    } else if (whear == "all") {
+      //l.jackson312@kvantomail.com:XOAIiia$mu43
+      const data = parseMailInText(e.target.value);
+      if (data) {
+        allData.login = data.login;
+        allData.domain = data.domain;
+        allData.password = data.password;
+        allData.email = data.email;
+
+        let findDomen = false;
+        const domains = import.meta.env.VITE_EMAIL_DOMEN.split(",").map(
+          (domain) => domain.trim()
+        );
+        domains.map((d, index) => {
+          if (d == data.domain) {
+            console.log(`НАШЕЛ`);
+            findDomen = true;
+          }
+        });
+        if (!findDomen) return true;
+
+        text = `${login}@${allData.domain}`;
+        whear = "email";
+        const newE = { target: { value: data.login } };
+
+        console.log(`Почта ${checkLogin(newE, "email")}`);
+        console.log(`Логин  ${checkLogin(newE, "login")}`);
+        if (checkLogin(newE, "email") || checkLogin(newE, "login")) {
+          console.log("+");
+          return true;
+        } else {
+          console.log("--");
+          return false;
+        }
+      } else {
+        console.log("-");
+        return true;
+      }
     } else {
       text = e.target.value;
     }
 
     users.forEach((element) => {
-      console.log(text);
-      console.log(element[whear]);
       if (element[whear] == text) {
         console.log(`${text} ${element[whear]}`);
         find = true;
@@ -155,15 +200,23 @@ function Admin() {
       setCurrentPage(currentPage - 1);
     }
   };
-  console.log(addUser.emailType);
-  function handleCreateUser() {
-    if (addUser.password.length == 0) {
+  function handleCreateUser(withParse) {
+    const userAllData = withParse ? parseMailInText(addUser.allData) : "";
+    let userPassword = withParse ? userAllData.password : addUser.password;
+    let userEmail = withParse
+      ? userAllData.email
+      : `${addUser.email}@${addUser.emailType}`;
+    let userLogin = withParse ? userAllData.login : addUser.login;
+
+    if (withParse && addUser.errorAllData) return false;
+
+    if (userPassword.length == 0 || addUser.errorPassword) {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorPassword: true }));
       return;
-    } else if (addUser.email.length == 0) {
+    } else if (userEmail.length == 0 || addUser.errorEmail) {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorEmail: true }));
       return;
-    } else if (addUser.login.length == 0) {
+    } else if (userLogin.length == 0 || addUser.errorLogin) {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorLogin: true }));
       return;
     }
@@ -173,10 +226,12 @@ function Admin() {
         token,
         login,
         loginType,
-        newUserEmail: `${addUser.email}@${addUser.emailType}`,
-        newUserLogin: addUser.login,
-        newUserPassword: addUser.password,
-        adminStatus: addUser.admin && addUser.admin2 && addUser.admin3,
+        newUserEmail: userEmail,
+        newUserLogin: userLogin,
+        newUserPassword: userPassword,
+        adminStatus: withParse
+          ? false
+          : addUser.admin && addUser.admin2 && addUser.admin3,
       })
       .then((response) => {
         console.log(response.data);
@@ -189,12 +244,14 @@ function Admin() {
             admin3: false,
             login: "",
             password: "",
+            allData: "",
             emailType: import.meta.env.VITE_EMAIL_DOMEN.split(",").map(
               (domain) => domain.trim()
             )[0],
             errorLogin: false,
             errorEmail: false,
             errorPassword: false,
+            errorAllData: false,
           });
           setTimeout(updateUsers, 100);
         }
@@ -250,7 +307,7 @@ function Admin() {
   }
   if (addUser.state) {
     return (
-      <div className={styles.wrapper}>
+      <div className={styles.wrapperAddUser}>
         <form
           className={styles.wrapperForm}
           onSubmit={(e) => {
@@ -260,7 +317,23 @@ function Admin() {
           <RiArrowLeftCircleFill
             className={styles.back}
             onClick={() =>
-              setAddUser((prevSet) => ({ ...prevSet, state: false }))
+              setAddUser({
+                state: false,
+                email: "",
+                admin: false,
+                admin2: false,
+                admin3: false,
+                login: "",
+                password: "",
+                allData: "",
+                emailType: import.meta.env.VITE_EMAIL_DOMEN.split(",").map(
+                  (domain) => domain.trim()
+                )[0],
+                errorLogin: false,
+                errorEmail: false,
+                errorPassword: false,
+                errorAllData: false,
+              })
             }
           />
           <h2 className={styles.wrapperForm__inputText}>Выбери почту юзеру</h2>
@@ -356,7 +429,7 @@ function Admin() {
               type="checkbox"
               checked={addUser.admin}
               className={`${styles.wrapperForm__inputcheckbox} `}
-              onClick={() => {
+              onChange={() => {
                 setAddUser((prevInfo) => ({
                   ...prevInfo,
                   admin: !prevInfo.admin,
@@ -367,7 +440,7 @@ function Admin() {
               type="checkbox"
               checked={addUser.admin2}
               className={`${styles.wrapperForm__inputcheckbox} `}
-              onClick={() => {
+              onChange={() => {
                 setAddUser((prevInfo) => ({
                   ...prevInfo,
                   admin2: !prevInfo.admin2,
@@ -378,7 +451,7 @@ function Admin() {
               type="checkbox"
               checked={addUser.admin3}
               className={`${styles.wrapperForm__inputcheckbox} `}
-              onClick={() => {
+              onChange={() => {
                 setAddUser((prevInfo) => ({
                   ...prevInfo,
                   admin3: !prevInfo.admin3,
@@ -386,9 +459,45 @@ function Admin() {
               }}
             />
           </div>
+          <button
+            onClick={() => {
+              handleCreateUser(false);
+            }}
+            className={styles.wrapperForm__button}
+          >
+            Создасть юзера
+          </button>
+        </form>
+        <h2 className={styles.wrapperAddUser__or}>либо</h2>
+        <form
+          className={styles.wrapperForm}
+          onSubmit={(e) => {
+            e.preventDefault(); // Предотвращаем стандартное поведение формы
+          }}
+        >
+          <h2 className={styles.wrapperForm__inputText}>
+            Введи данные формата email:password
+          </h2>
+          <input
+            value={addUser.allData}
+            onChange={(e) => {
+              setAddUser((prevInfo) => ({
+                ...prevInfo,
+                allData: e.target.value,
+                errorAllData: checkLogin(e, "all"),
+              }));
+            }}
+            className={`${styles.wrapperForm__input} ${
+              addUser.errorAllData ? styles.errorData : ""
+            }`}
+            type="text"
+            placeholder="email:password"
+          />
 
           <button
-            onClick={handleCreateUser}
+            onClick={() => {
+              handleCreateUser(true);
+            }}
             className={styles.wrapperForm__button}
           >
             Создасть юзера
