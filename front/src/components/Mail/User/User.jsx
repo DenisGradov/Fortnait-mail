@@ -163,15 +163,6 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
       })}`;
     }
   };
-  if (settingsOpen) {
-    return (
-      <UserSettings
-        setSettingsOpen={setSettingsOpen}
-        setIsAuthenticated={setIsAuthenticated}
-        userEmail={userEmail}
-      />
-    );
-  }
   if (sendMail) {
     //return <NotWorking setSendMail={setSendMail} />;
     //return <SendMail setSendMail={setSendMail} />;
@@ -227,129 +218,156 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
     );
   }
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.top}>
-        <h2
-          onClick={() => {
-            setSendMail(true);
-          }}
-          className={`${styles.top__send} ${styles.noSelect}`}
-        >
-          Send mail
-        </h2>
-
-        <div className={styles.topMenuSearch}>
-          <input
-            value={searchInput}
-            onChange={(e) => {
-              handleUpdateInput(e);
+    <>
+      <div className={styles.wrapper}>
+        <div className={styles.top}>
+          <h2
+            onClick={() => {
+              setSendMail(true);
             }}
-            className={styles.topMenuSearch__input}
-            placeholder="Search mail"
-          />
-          <RiSearchLine className={styles.topMenuSearch__icon} />
-        </div>
-        <RiSettings3Line
-          onClick={() => {
-            setSettingsOpen(true);
-          }}
-          className={styles.topMenuSettings}
-        />
-      </div>
-      <div className={styles.NumberMails}>
-        <h2 className={`${styles.noSelect} ${styles.NumberMailsNumer}`}>
-          {getMailRange()}
-        </h2>
-        <RiArrowLeftSLine
-          onClick={() => {
-            if (mailOnScreen.numerPage > 0) {
-              setMailOnScreen((prevSet) => ({
-                ...prevSet,
-                numerPage: prevSet.numerPage - 1,
-              }));
-            }
-          }}
-          className={`${styles.noSelect} ${styles.NumberMailsIcon} ${
-            mailOnScreen.numerPage > 0 ? styles.NumberMailsIconCanClick : false
-          }`}
-        />
-        <RiArrowRightSLine
-          onClick={() => {
-            if (mailOnScreen.numerPage < maxPage) {
-              setMailOnScreen((prevSet) => ({
-                ...prevSet,
-                numerPage: prevSet.numerPage + 1,
-              }));
-            }
-          }}
-          className={`${styles.noSelect} ${styles.NumberMailsIcon} ${
-            mailOnScreen.numerPage < maxPage
-              ? styles.NumberMailsIconCanClick
-              : false
-          }`}
-        />
-      </div>
-      <div className={styles.bottomBoxWithReceived}>
-        {posts.received
-          .filter(
-            (item) =>
-              !searchInput.trim() ||
-              (item.text &&
-                item.text.toLowerCase().includes(searchInput.toLowerCase())) ||
-              (item.sender &&
-                item.sender
-                  .toLowerCase()
-                  .includes(searchInput.toLowerCase())) ||
-              (item.subject &&
-                item.subject.toLowerCase().includes(searchInput.toLowerCase()))
-          )
-          .map((item, index) => {
-            const postsPerPage = 50;
-            const currentPage = mailOnScreen.numerPage;
-            const startIndex = currentPage * postsPerPage;
-            const endIndex = startIndex + postsPerPage;
+            className={`${styles.top__send} ${styles.noSelect}`}
+          >
+            Send mail
+          </h2>
 
-            // Only proceed if the post's index is within the range of the current page
-            if (index >= startIndex && index < endIndex) {
-              console.log(item.text);
-              return (
-                <div
-                  key={`received mail ${index}`}
-                  onClick={() => {
-                    handleOpenMail(item);
-                  }}
-                  className={`${styles.bottomBoxWithReceivedItem} ${
-                    item.viewed
-                      ? styles.bottomBoxWithReceivedItem__viewed
-                      : styles.bottomBoxWithReceivedItem__notViewed
-                  }`}
-                >
-                  <h2 className={styles.bottomBoxWithReceivedItem__element}>
-                    {item.sender.length > 35
-                      ? item.sender.slice(0, 35) + "..."
-                      : item.sender}
-                  </h2>
-                  <h2 className={styles.bottomBoxWithReceivedItem__element}>
-                    {item.subject.length > 35
-                      ? item.subject.slice(0, 35) + "..."
-                      : item.subject}
-                  </h2>
-                  <h2 className={styles.bottomBoxWithReceivedItem__element}>
-                    {item.text
-                      ? item.text.length > 95
-                        ? item.text.slice(0, 95) + "..."
-                        : item.text
-                      : ""}
-                  </h2>
-                  <h2 className={styles.bottomBoxWithReceivedItem__element}>
-                    {formatDateOrTime(item.date)}
-                  </h2>
-                </div>
-              );
-            }
-          })}
+          <div className={styles.topMenuSearch}>
+            <input
+              value={searchInput}
+              onChange={(e) => {
+                handleUpdateInput(e);
+              }}
+              className={styles.topMenuSearch__input}
+              placeholder="Search mail"
+            />
+            <RiSearchLine className={styles.topMenuSearch__icon} />
+          </div>
+          <RiSettings3Line
+            onClick={() => {
+              setSettingsOpen(true);
+            }}
+            className={styles.topMenuSettings}
+          />
+        </div>
+        <div className={styles.NumberMails}>
+          <h2 className={`${styles.noSelect} ${styles.NumberMailsNumer}`}>
+            {getMailRange()}
+          </h2>
+          <RiArrowLeftSLine
+            onClick={() => {
+              if (mailOnScreen.numerPage > 0) {
+                setMailOnScreen((prevSet) => ({
+                  ...prevSet,
+                  numerPage: prevSet.numerPage - 1,
+                }));
+              }
+            }}
+            className={`${styles.noSelect} ${styles.NumberMailsIcon} ${
+              mailOnScreen.numerPage > 0
+                ? styles.NumberMailsIconCanClick
+                : false
+            }`}
+          />
+          <RiArrowRightSLine
+            onClick={() => {
+              if (mailOnScreen.numerPage < maxPage) {
+                setMailOnScreen((prevSet) => ({
+                  ...prevSet,
+                  numerPage: prevSet.numerPage + 1,
+                }));
+              }
+            }}
+            className={`${styles.noSelect} ${styles.NumberMailsIcon} ${
+              mailOnScreen.numerPage < maxPage
+                ? styles.NumberMailsIconCanClick
+                : false
+            }`}
+          />
+        </div>
+        <div className={styles.bottomBoxWithReceived}>
+          {posts.received
+            .filter(
+              (item) =>
+                !searchInput.trim() ||
+                (item.text &&
+                  item.text
+                    .toLowerCase()
+                    .includes(searchInput.toLowerCase())) ||
+                (item.sender &&
+                  item.sender
+                    .toLowerCase()
+                    .includes(searchInput.toLowerCase())) ||
+                (item.subject &&
+                  item.subject
+                    .toLowerCase()
+                    .includes(searchInput.toLowerCase()))
+            )
+            .map((item, index) => {
+              const postsPerPage = 50;
+              const currentPage = mailOnScreen.numerPage;
+              const startIndex = currentPage * postsPerPage;
+              const endIndex = startIndex + postsPerPage;
+
+              // Only proceed if the post's index is within the range of the current page
+              if (index >= startIndex && index < endIndex) {
+                console.log(item.text);
+                return (
+                  <div
+                    key={`received mail ${index}`}
+                    onClick={() => {
+                      handleOpenMail(item);
+                    }}
+                    className={`${styles.bottomBoxWithReceivedItem} ${
+                      item.viewed
+                        ? styles.bottomBoxWithReceivedItem__viewed
+                        : styles.bottomBoxWithReceivedItem__notViewed
+                    }`}
+                  >
+                    <h2 className={styles.bottomBoxWithReceivedItem__element}>
+                      {item.sender.length > 35
+                        ? item.sender.slice(0, 35) + "..."
+                        : item.sender}
+                    </h2>
+                    <h2 className={styles.bottomBoxWithReceivedItem__element}>
+                      {item.subject.length > 35
+                        ? item.subject.slice(0, 35) + "..."
+                        : item.subject}
+                    </h2>
+                    <h2 className={styles.bottomBoxWithReceivedItem__element}>
+                      {item.text
+                        ? item.text.length > 95
+                          ? item.text.slice(0, 95) + "..."
+                          : item.text
+                        : ""}
+                    </h2>
+                    <h2 className={styles.bottomBoxWithReceivedItem__element}>
+                      {formatDateOrTime(item.date)}
+                    </h2>
+                  </div>
+                );
+              }
+            })}
+        </div>
       </div>
-    </div>
+      {settingsOpen && (
+        <UserSettings
+          setSettingsOpen={setSettingsOpen}
+          setIsAuthenticated={setIsAuthenticated}
+          userEmail={userEmail}
+        />
+      )}
+      <h2 className={styles.headerAdminMessageBig}>
+        Have a question? Write by email{" "}
+        <span className={styles.headerAdminMessageBlue}>
+          admin@kvantomail.com
+        </span>
+      </h2>
+      <h2 className={styles.headerAdminMessageSmall}>
+        Question?{" "}
+        <span className={styles.headerAdminMessageBlue}>
+          admin@kvantomail.com
+        </span>
+      </h2>
+    </>
   );
 }
 

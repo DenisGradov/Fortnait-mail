@@ -32,9 +32,11 @@ function Mail() {
         .then((response) => {
           setIsAuthenticated(true);
           if (response.data.status == "1") {
-            setUser({ status: true, email: response.data.email });
-          } else {
             setUser({ status: false, email: response.data.email });
+            console.log(response.data);
+          } else {
+            setUser({ status: true, email: response.data.email });
+            console.log(response.data);
           }
           setCheckCookieOnBack(true);
         })

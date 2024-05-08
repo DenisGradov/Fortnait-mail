@@ -7,6 +7,34 @@
 body {
   background-color: #19191a;
 }
+.headerAdminMessage {
+  &Big,
+  &Small {
+    position: absolute;
+    top: 5px;
+    width: 100%;
+    text-align: center;
+
+    font-family: "Inter";
+    font-weight: bold;
+    color: white;
+    font-size: 12px;
+  }
+  &Big {
+    @media (max-width: 367px) {
+      display: none;
+    }
+  }
+  &Small {
+    @media (min-width: 367px) {
+      display: none;
+    }
+  }
+  &Blue {
+    font-size: 14px;
+    color: #315efb;
+  }
+}
 .wrapper {
   position: relative;
   margin: 0 auto;

@@ -15,19 +15,20 @@
   border: 2px solid #ff0000;
 }
 .wrapper {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 1;
   @media (max-width: 348px) {
     padding-left: 18px;
   }
-  overflow: hidden;
-  width: 100vw;
-  height: 100vh;
+  @media (max-width: 400px) {
+    left: -10px;
+    overflow: hidden;
+  }
   .loginForm {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 500px;
-    height: 300px;
+    width: 400px;
+    height: 400px;
     background-color: #19191a;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.25);
     border-radius: 15px;
@@ -57,6 +58,36 @@
           font-weight: 400;
           color: white;
           font-size: 14px;
+          &Help {
+            margin-bottom: 30px;
+            margin-left: 30px;
+            color: #444444;
+          }
+          &Email {
+            margin: 20px 0 5px 0;
+            display: flex;
+            align-items: center;
+            font-family: "Inter";
+            font-weight: 400;
+            color: #315efb;
+            font-size: 14px;
+            &Text {
+              cursor: pointer;
+              &:hover {
+                scale: 1.03;
+                transition-duration: 0.3s;
+              }
+            }
+            &Icon {
+              font-size: 20px;
+              margin-right: 10px;
+              cursor: pointer;
+              &:hover {
+                scale: 1.03;
+                transition-duration: 0.3s;
+              }
+            }
+          }
         }
       }
       &__button {

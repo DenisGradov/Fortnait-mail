@@ -1,9 +1,10 @@
 import { useState } from "react";
 import styles from "./userSettings.module.scss";
-import { RiArrowLeftCircleFill } from "react-icons/ri";
+import { RiArrowLeftCircleFill, RiFileCopyLine } from "react-icons/ri";
 import axios from "axios";
 import useCookie from "../../../hooks/useCookie";
 import { useNavigate } from "react-router-dom";
+import copyTextToClipboard from "../../../functions/copyTextToClipboard";
 function UserSettings({ setSettingsOpen, setIsAuthenticated, userEmail }) {
   const [passwords, setPasswords] = useState({ old: "", new: "" });
 
@@ -39,6 +40,7 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated, userEmail }) {
         }
       });
   }
+  console.log(userEmail);
   return (
     <div className={styles.wrapper}>
       <div className={styles.loginForm}>
@@ -55,8 +57,21 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated, userEmail }) {
                 setSettingsOpen(false);
               }}
             />
-            <h2 className={styles.loginFormInput__inputText}>
-              Your email is: {userEmail}
+            <h2 className={styles.loginFormInput__inputText}>Your email is:</h2>
+            <h2 className={styles.loginFormInput__inputTextEmail}>
+              <RiFileCopyLine
+                onClick={copyTextToClipboard(userEmail)}
+                className={styles.loginFormInput__inputTextEmailIcon}
+              />
+              <span
+                onClick={copyTextToClipboard(userEmail)}
+                className={styles.loginFormInput__inputTextEmailText}
+              >
+                {userEmail}
+              </span>
+            </h2>
+            <h2 className={styles.loginFormInput__inputTextHelp}>
+              (click on mail to copy)
             </h2>
             <h2 className={styles.loginFormInput__inputText}>
               Enter your password:
