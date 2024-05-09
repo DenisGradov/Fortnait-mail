@@ -71,6 +71,7 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
             clickToDeleate: 0,
           }));
           setPosts(newPosts);
+          setMailOnScreen((prevSet) => ({ ...prevSet, mailOpen: false }));
         })
         .catch((error) => {
           console.error("Error when send posts", error);
@@ -379,10 +380,11 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
               const currentPage = mailOnScreen.numerPage;
               const startIndex = currentPage * postsPerPage;
               const endIndex = startIndex + postsPerPage;
-
+              console.log(index);
+              if (item == undefined) return false;
               // Only proceed if the post's index is within the range of the current page
               if (index >= startIndex && index < endIndex) {
-                console.log(item.text);
+                console.log(item);
                 return (
                   <div
                     key={`received mail ${index}`}
