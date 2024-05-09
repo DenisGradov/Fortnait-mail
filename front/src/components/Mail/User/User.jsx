@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 const CLICK_TO_DELEATE_MESSAGE = 2;
 import { useEffect, useRef, useState } from "react";
 import styles from "./user.module.scss";
@@ -17,7 +18,14 @@ import useCookie from "../../../hooks/useCookie";
 import SendMail from "../../SendMail/SendMail";
 import NotWorking from "../../NotWorking/NotWorking";
 
-function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
+function User({
+  fromAdmin,
+  isAuthenticated,
+  setIsAuthenticated,
+  userEmail,
+  userId,
+  setCheckUserMails,
+}) {
   const [posts, setPosts] = useState({ sent: [], received: [] });
   const [sendMail, setSendMail] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -89,7 +97,7 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
 
   function handleOpenMail(element) {
     console.log(element);
-    if (!element.viewed) {
+    if (!element.viewed && !fromAdmin) {
       console.log("sss2");
       axios
         .post(`${import.meta.env.VITE_BACKEND_URL}/api/checkPost`, {
@@ -143,6 +151,8 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
           token,
           login,
           loginType,
+          fromAdmin: fromAdmin ? true : false,
+          userId: userId ? userId : false,
         })
         .then((response) => {
           let newPosts = response.data;
@@ -256,7 +266,7 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
             <RiDeleteBin6Line
               onClick={(event) => {
                 event.stopPropagation(); // Запобігає спливанню події
-                handleDeleateMessage(item.id);
+                if (!fromAdmin) handleDeleateMessage(item.id);
               }}
               className={styles.bottomBoxWithReceivedItem__elementIcon}
             />
@@ -292,14 +302,25 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
     <>
       <div className={styles.wrapper}>
         <div className={styles.top}>
-          <h2
-            onClick={() => {
-              setSendMail(true);
-            }}
-            className={`${styles.top__send} ${styles.noSelect}`}
-          >
-            Send mail
-          </h2>
+          {fromAdmin && (
+            <RiArrowLeftCircleFill
+              className={styles.back2}
+              onClick={() =>
+                setCheckUserMails((prevSet) => ({ ...prevSet, state: false }))
+              }
+            />
+          )}
+          {!fromAdmin && (
+            <h2
+              onClick={() => {
+                setSendMail(true);
+              }}
+              className={`${styles.top__send} ${styles.noSelect}`}
+            >
+              Send mail
+            </h2>
+          )}
+
           <RiRestartLine
             onClick={getPosts}
             className={`${styles.pagination__Icon} ${styles.noSelect} ${styles.pagination__IconCanClick}`}
@@ -315,12 +336,14 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
             />
             <RiSearchLine className={styles.topMenuSearch__icon} />
           </div>
-          <RiSettings3Line
-            onClick={() => {
-              setSettingsOpen(true);
-            }}
-            className={styles.topMenuSettings}
-          />
+          {!fromAdmin && (
+            <RiSettings3Line
+              onClick={() => {
+                setSettingsOpen(true);
+              }}
+              className={styles.topMenuSettings}
+            />
+          )}
         </div>
         <div className={styles.NumberMails}>
           <h2 className={`${styles.noSelect} ${styles.NumberMailsNumer}`}>
@@ -400,7 +423,7 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
                     <RiDeleteBin6Line
                       onClick={(event) => {
                         event.stopPropagation(); // Запобігає спливанню події
-                        handleDeleateMessage(item.id);
+                        if (!fromAdmin) handleDeleateMessage(item.id);
                       }}
                       className={styles.bottomBoxWithReceivedItem__elementIcon}
                     />
@@ -438,16 +461,20 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
           userEmail={userEmail}
         />
       )}
+
       <h2 className={styles.headerAdminMessageBig}>
-        Have a question? Write by email{" "}
+        {fromAdmin
+          ? "Вы просматриваете почту "
+          : "Have a question? Write by email"}
         <span className={styles.headerAdminMessageBlue}>
-          admin@kvantomail.com
+          {fromAdmin ? "юзера" : "admin@kvantomail.com"}
         </span>
       </h2>
+
       <h2 className={styles.headerAdminMessageSmall}>
-        Question?{" "}
+        {fromAdmin ? "Почта " : "Question"}
         <span className={styles.headerAdminMessageBlue}>
-          admin@kvantomail.com
+          {fromAdmin ? "юзера" : "admin@kvantomail.com"}
         </span>
       </h2>
     </>

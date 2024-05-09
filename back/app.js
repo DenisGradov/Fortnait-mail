@@ -120,28 +120,48 @@ app.post("/api/SendMail", (req, res) => {
 });
 
 app.post("/api/getPosts", (req, res) => {
-  const { token, login, loginType } = req.body;
+  const { token, login, loginType, fromAdmin, userId } = req.body;
   if (token == "undefined") {
     return res.status(401).send("Token is required");
   } else {
-    searchRow("users", loginType, login, (row) => {
-      console.log(loginType);
-      console.log(row.cookie);
-      if (row) {
-        if (token === row.cookie && row.blocked == "0") {
-          updateUserLastAccest("users", row.id, (error, result) => {
-            if (error) {
-              console.error("Произошла ошибка:", error);
-            }
-          });
-          res.json(JSON.parse(row.posts));
-        } else {
-          console.log("Рядок не знайдено");
-          res.statusCode = 401;
-          res.send("don't good");
+    if (!fromAdmin) {
+      searchRow("users", loginType, login, (row) => {
+        console.log(loginType);
+        console.log(row.cookie);
+        if (row) {
+          if (token === row.cookie && row.blocked == "0") {
+            updateUserLastAccest("users", row.id, (error, result) => {
+              if (error) {
+                console.error("Произошла ошибка:", error);
+              }
+            });
+            res.json(JSON.parse(row.posts));
+          } else {
+            console.log("Рядок не знайдено");
+            res.statusCode = 401;
+            res.send("don't good");
+          }
         }
-      }
-    });
+      });
+    } else {
+      searchRow("users", loginType, login, (row) => {
+        console.log(loginType);
+        console.log(row.cookie);
+        if (row) {
+          if (token === row.cookie && row.admin == "1") {
+            searchRow("users", "id", userId, (row) => {
+              if (row) {
+                res.json(JSON.parse(row.posts));
+              }
+            });
+          } else {
+            console.log("Рядок не знайдено");
+            res.statusCode = 401;
+            res.send("don't good");
+          }
+        }
+      });
+    }
   }
 });
 

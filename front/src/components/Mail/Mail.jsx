@@ -70,13 +70,18 @@ function Mail() {
             <Blocked userEmail={user.email} />
           ) : (
             <User
+              fromAdmin={false}
               isAuthenticated={isAuthenticated}
               setIsAuthenticated={setIsAuthenticated}
               userEmail={user.email}
             />
           )
         ) : (
-          <Admin />
+          <Admin
+            fromAdmin={false}
+            isAuthenticated={isAuthenticated}
+            setIsAuthenticated={setIsAuthenticated}
+          />
         )
       ) : (
         ""

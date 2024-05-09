@@ -89,6 +89,17 @@ body {
       scale: 1.03;
       transition-duration: 0.3s;
     }
+    &2 {
+      position: absolute;
+      left: 2px;
+      font-size: 50px;
+      color: #315efb;
+      cursor: pointer;
+      &:hover {
+        scale: 1.03;
+        transition-duration: 0.3s;
+      }
+    }
   }
   .top {
     display: flex;
@@ -248,22 +259,27 @@ body {
           }
         }
         &:nth-child(1) {
+          flex: 5%;
+        }
+        &:nth-child(1) {
           flex: 20%;
         }
         &:nth-child(2) {
+        }
+        &:nth-child(3) {
           flex: 22%;
           @media (max-width: 580px) {
             margin-top: 8px;
             text-align: center;
           }
         }
-        &:nth-child(3) {
+        &:nth-child(4) {
           flex: 45%;
           @media (max-width: 1106px) {
             display: none;
           }
         }
-        &:nth-child(4) {
+        &:nth-child(5) {
           flex: 8%;
           @media (max-width: 760px) {
             display: none;

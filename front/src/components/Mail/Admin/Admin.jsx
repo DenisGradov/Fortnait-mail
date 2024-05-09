@@ -17,7 +17,8 @@ import formatDateOrTime from "../../../functions/formatDateOrTime";
 import generatePassword from "../../../functions/generatePassword";
 import parseMailInText from "../../../functions/parseMailInText";
 import isValidText from "../../../functions/isValidText";
-function Admin() {
+import User from "../User/User";
+function Admin({ isAuthenticated, setIsAuthenticated, userEmail }) {
   const [users, setUsers] = useState([]);
   const [userInfo, setUserInfo] = useState({
     state: false,
@@ -57,6 +58,10 @@ function Admin() {
     errorAllData: false,
   });
   const [currentPage, setCurrentPage] = useState(1);
+  const [checkUserMails, setCheckUserMails] = useState({
+    state: false,
+    userId: 0,
+  });
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
@@ -329,7 +334,20 @@ function Admin() {
         setUserInfo={setUserInfo}
       />
     );
+  } //{ isAuthenticated, setIsAuthenticated, userEmail }
+  if (checkUserMails.state) {
+    return (
+      <User
+        fromAdmin={true}
+        isAuthenticated={isAuthenticated}
+        setIsAuthenticated={setIsAuthenticated}
+        userEmail={userEmail}
+        userId={checkUserMails.userId}
+        setCheckUserMails={setCheckUserMails}
+      />
+    );
   }
+
   if (addUser.state) {
     return (
       <div className={styles.wrapperAddUser}>
@@ -633,6 +651,10 @@ function Admin() {
                   id: user.id,
                   blocked: user.blocked,
                 }));
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setCheckUserMails({ state: true, userId: user.id });
               }}
               key={`itemWithUser #${index}`}
               className={styles.user}
