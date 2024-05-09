@@ -49,6 +49,8 @@ const deleteUserById = require("./dataBase/functions/deleteUserById.js");
 const changeUserLogin = require("./dataBase/functions/changeUserLogin.js");
 const updateUserLogsAndLastAccess = require("./dataBase/functions/updateUserLogsAndLastAccess.js");
 const updateUserLastAccest = require("./dataBase/functions/updateUserLastAccest.js");
+const changeUserAdminMessage = require("./dataBase/functions/changeUserAdminMessage.js");
+const changeUserBlocking = require("./dataBase/functions/changeUserBlocking.js");
 const app = express();
 const SECRET_KEY = "HLHNLcHGnJQM-be2aR0P5UpZl-NruOGVFZMu5d";
 // Для обробки JSON тіла запиту
@@ -80,7 +82,7 @@ app.post("/api/SendMail", (req, res) => {
       console.log(loginType);
       console.log(row.cookie);
       if (row) {
-        if (token === row.cookie) {
+        if (token === row.cookie && row.blocked == "0") {
           let mailOptions = {
             from: row.email,
             to: sendTo, // Адреса отримувача
@@ -117,7 +119,7 @@ app.post("/api/getPosts", (req, res) => {
       console.log(loginType);
       console.log(row.cookie);
       if (row) {
-        if (token === row.cookie) {
+        if (token === row.cookie && row.blocked == "0") {
           updateUserLastAccest("users", row.id, (error, result) => {
             if (error) {
               console.error("Произошла ошибка:", error);
@@ -220,6 +222,44 @@ app.post("/api/deleateUser", (req, res) => {
     }
   });
 });
+app.post("/api/bunUser", (req, res) => {
+  const { token, login, loginType, userId, blockedStatus } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  }
+  console.log(`blockedStatus:${blockedStatus}`);
+  searchRow("users", loginType, login, (row) => {
+    if (row) {
+      if (token === row.cookie && row.admin == 1) {
+        changeUserBlocking("users", userId, blockedStatus, (err, success) => {
+          if (err) {
+            console.log("Произошла ошибка при изменении данных:", err);
+            res.status(300).send("error");
+          } else if (success) {
+            updateUserLastAccest("users", row.id, (error, result) => {
+              if (error) {
+                console.error("Произошла ошибка:", error);
+              }
+            });
+            console.log("Данные пользователя успешно обновлены.");
+
+            res.status(200).send("good");
+          } else {
+            console.log("Пользователь с таким ID не найден.");
+
+            res.status(300).send("error");
+          }
+        });
+      } else {
+        console.log("Рядок не знайдено");
+        res.status(401).send("Invalid token");
+      }
+    } else {
+      console.log("Рядок не знайдено");
+      res.status(401).send("User not found");
+    }
+  });
+});
 
 app.post("/api/changePasswordByAdmin", (req, res) => {
   const { token, login, loginType, userId, newUserPassword } = req.body;
@@ -306,6 +346,37 @@ app.post("/api/changeLoginByAdmin", (req, res) => {
     }
   });
 });
+app.post("/api/changeAdminMessage", (req, res) => {
+  const { token, login, loginType, userId, adminMessage } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  }
+
+  searchRow("users", loginType, login, (row) => {
+    console.log(loginType);
+    if (row) {
+      if (token === row.cookie && row.admin == 1) {
+        changeUserAdminMessage(
+          "users",
+          userId,
+          adminMessage,
+          (error, result) => {
+            if (error) {
+              console.error("Произошла ошибка:", error);
+            }
+          }
+        );
+        res.status(200).send("good");
+      } else {
+        console.log("Рядок не знайдено");
+        res.status(401).send("Invalid token");
+      }
+    } else {
+      console.log("Рядок не знайдено");
+      res.status(401).send("User not found");
+    }
+  });
+});
 
 app.post("/api/getUsers", (req, res) => {
   const { token, login, loginType } = req.body;
@@ -323,13 +394,14 @@ app.post("/api/getUsers", (req, res) => {
             console.log("Сталася помилка:", err);
             return res.status(500).send("Server error");
           } else if (users.length > 0) {
-            console.log("Знайдені користувачі:", users);
             const newUsers = [];
             users.forEach((user) => {
               newUsers.push({
                 admin: user.admin,
                 email: user.email,
                 id: user.id,
+                blocked: user.blocked,
+                adminMessage: user.adminMessage,
                 lastAsset: user.lastAsset,
                 login: user.login,
                 logs: JSON.parse(user.logs),
@@ -375,7 +447,11 @@ app.post("/api/verifyToken", (req, res) => {
             }
           });
           res.statusCode = 200;
-          res.json({ status: row.admin.toString(), email: row.email });
+          res.json({
+            status: row.admin.toString(),
+            email: row.email,
+            blocked: row.blocked,
+          });
         } else {
           console.log("Рядок не знайдено");
           res.statusCode = 401;
@@ -399,7 +475,7 @@ app.post("/api/ChangePassword", (req, res) => {
     if (!row) {
       return res.status(404).send("User not found");
     }
-    if (token !== row.cookie) {
+    if (token !== row.cookie && row.blocked == "1") {
       return res.status(401).send("Invalid token");
     }
 
@@ -467,7 +543,7 @@ app.post("/api/checkPost", (req, res) => {
     return res.status(401).send("Token is required");
   } else {
     searchRow("users", loginType, login, (row) => {
-      if (row && token === row.cookie) {
+      if (row && token === row.cookie && row.blocked == "0") {
         let postsObject = JSON.parse(row.posts);
         let receivedUpdated = false;
         const newReceived = postsObject.received.map((e) => {

@@ -105,8 +105,19 @@
     border-radius: 100px;
     cursor: pointer;
     &Red {
+      margin-bottom: 10px;
       margin-top: 50px;
       background-color: red;
+    }
+    &Orange {
+      margin-bottom: -50px;
+      margin-top: 50px;
+      background-color: orange;
+    }
+    &Green {
+      margin-bottom: -50px;
+      margin-top: 50px;
+      background-color: green;
     }
     &:hover {
       scale: 1.03;
@@ -123,6 +134,7 @@
   max-width: 1920px;
   width: 100%;
   padding: 20px;
+  overflow: auto;
   &AddUser {
     position: absolute;
     top: 50%;
@@ -314,14 +326,71 @@
       }
     }
   }
+  &__text {
+    margin: 0 auto;
+    margin-top: 40px;
+    color: white;
+    font-size: 16px;
+    font-family: "Roboto";
+    font-weight: bold;
+  }
+  &Message {
+    margin: 0 auto;
+    margin-top: -10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @media (max-width: 500px) {
+      flex-direction: column;
+    }
+
+    &__input {
+      margin: 5px;
+      height: 100%;
+      flex-grow: 1;
+      padding: 12px 17px;
+      border-radius: 10px;
+      color: #315efb;
+      background-color: #315dfb20;
+      @media (max-width: 500px) {
+        width: 90%;
+      }
+    }
+    &__button {
+      margin: 5px;
+      padding: 10px 40px;
+      text-align: center;
+      color: #ffffff;
+      font-family: "Roboto";
+      background-color: #315efb;
+      border-radius: 100px;
+      cursor: pointer;
+      &:hover {
+        scale: 1.03;
+        transition-duration: 0.3s;
+      }
+    }
+  }
   &Bottom {
     margin: 10px;
     border: 1px solid #000;
     max-height: 50vh;
-    overflow-y: scroll;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    &2 {
+      margin: 10px;
+      border: 1px solid #000;
+      max-height: 75vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   }
 }
 
@@ -359,6 +428,22 @@
       border-radius: 50%;
       height: 50px;
       width: 50px;
+      &Red {
+        background-color: red;
+        padding: 2px;
+      }
+      &Green {
+        background-color: green;
+        padding: 2px;
+      }
+    }
+    &__smsImg {
+      font-size: 30px;
+      color: #444444;
+      &T {
+        font-size: 30px;
+        color: rgb(175, 175, 72);
+      }
     }
   }
   &__text {

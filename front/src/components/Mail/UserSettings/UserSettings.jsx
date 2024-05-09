@@ -97,10 +97,11 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated, userEmail }) {
             <input
               value={passwords.new}
               onChange={(e) => {
-                setPasswords((prevPasswords) => ({
-                  ...prevPasswords,
-                  new: e.target.value,
-                }));
+                if (e.target.value.length < 100)
+                  setPasswords((prevPasswords) => ({
+                    ...prevPasswords,
+                    new: e.target.value,
+                  }));
               }}
               className={styles.loginFormInput__input}
               type="password"

@@ -8,6 +8,7 @@ import {
   RiArrowLeftCircleFill,
   RiArrowLeftSLine,
   RiArrowRightSLine,
+  RiMessage2Line,
   RiRestartLine,
   RiSearchLine,
 } from "react-icons/ri";
@@ -15,12 +16,16 @@ import UserLogs from "./UserLogs";
 import formatDateOrTime from "../../../functions/formatDateOrTime";
 import generatePassword from "../../../functions/generatePassword";
 import parseMailInText from "../../../functions/parseMailInText";
+import isValidText from "../../../functions/isValidText";
 function Admin() {
   const [users, setUsers] = useState([]);
   const [userInfo, setUserInfo] = useState({
     state: false,
+    changeBun: false,
     id: 0,
     clickForDeleateUser: 0,
+    clickForBunUser: 0,
+    blocked: 0,
     password: "",
     login: "",
     errorPassword: false,
@@ -30,8 +35,9 @@ function Admin() {
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,
       clickForDeleateUser: 0,
+      clickForBunUser: 0,
     }));
-  }, [userInfo.state, userInfo.id]);
+  }, [userInfo.state, userInfo.id, userInfo.changeBun, userInfo.blocked]);
   const intervalRef = useRef(null);
   const [addUser, setAddUser] = useState({
     state: false,
@@ -212,13 +218,28 @@ function Admin() {
 
     if (withParse && addUser.errorAllData) return false;
 
-    if (userPassword.length == 0 || addUser.errorPassword) {
+    if (
+      userPassword.length == 0 ||
+      addUser.errorPassword ||
+      !isValidText(userPassword) ||
+      userPassword.length > 100
+    ) {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorPassword: true }));
       return;
-    } else if (userEmail.length == 0 || addUser.errorEmail) {
+    } else if (
+      userEmail.length == 0 ||
+      addUser.errorEmail ||
+      !isValidText(userEmail) ||
+      userEmail.length > 100
+    ) {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorEmail: true }));
       return;
-    } else if (userLogin.length == 0 || addUser.errorLogin) {
+    } else if (
+      userLogin.length == 0 ||
+      addUser.errorLogin ||
+      !isValidText(userPassword) ||
+      userLogin.length > 100
+    ) {
       setAddUser((prevAddUser) => ({ ...prevAddUser, errorLogin: true }));
       return;
     }
@@ -348,7 +369,10 @@ function Admin() {
               setAddUser((prevInfo) => ({
                 ...prevInfo,
                 emailType: e.target.value,
-                errorEmail: checkLogin(e, "emailType"),
+                errorEmail:
+                  checkLogin(e, "emailType") ||
+                  !isValidText(e.target.value) ||
+                  e.target.value.length > 100,
               }));
             }}
             id="languages"
@@ -375,7 +399,10 @@ function Admin() {
               setAddUser((prevInfo) => ({
                 ...prevInfo,
                 email: e.target.value,
-                errorEmail: checkLogin(e, "email"),
+                errorEmail:
+                  checkLogin(e, "email") ||
+                  !isValidText(e.target.value) ||
+                  e.target.value.length > 100,
               }));
             }}
             className={`${styles.wrapperForm__input} ${
@@ -391,7 +418,10 @@ function Admin() {
               setAddUser((prevInfo) => ({
                 ...prevInfo,
                 login: e.target.value,
-                errorLogin: checkLogin(e, "login"),
+                errorLogin:
+                  checkLogin(e, "login") ||
+                  !isValidText(e.target.value) ||
+                  e.target.value.length > 100,
               }));
             }}
             className={`${styles.wrapperForm__input} ${
@@ -407,6 +437,8 @@ function Admin() {
               setAddUser((prevInfo) => ({
                 ...prevInfo,
                 password: e.target.value,
+                errorPassword:
+                  !isValidText(e.target.value) || e.target.value.length > 100,
               }));
             }}
             className={`${styles.wrapperForm__input} ${
@@ -488,7 +520,12 @@ function Admin() {
               setAddUser((prevInfo) => ({
                 ...prevInfo,
                 allData: e.target.value,
-                errorAllData: checkLogin(e, "all"),
+                errorAllData:
+                  e.target.value == ""
+                    ? false
+                    : checkLogin(e, "all") ||
+                      !isValidText(e.target.value) ||
+                      e.target.value.length > 200,
               }));
             }}
             className={`${styles.wrapperForm__input} ${
@@ -592,7 +629,9 @@ function Admin() {
                 setUserInfo((prevUserInfo) => ({
                   ...prevUserInfo,
                   state: true,
+                  changeBun: true,
                   id: user.id,
+                  blocked: user.blocked,
                 }));
               }}
               key={`itemWithUser #${index}`}
@@ -601,7 +640,11 @@ function Admin() {
               <div className={`${styles.userLogo} ${styles.user__item}`}>
                 <img
                   src={user.admin == "1" ? "/god.jpg" : "/mamont.jpg"}
-                  className={`${styles.userLogo__img} ${styles.user__item}`}
+                  className={`${styles.userLogo__img} ${styles.user__item} ${
+                    user.blocked == 1
+                      ? styles.userLogo__imgRed
+                      : styles.userLogo__imgGreen
+                  }`}
                 />
               </div>
               <h2 className={`${styles.user__text} ${styles.user__item}`}>
@@ -615,6 +658,16 @@ function Admin() {
                   ? "Не заходил"
                   : formatDateOrTime(user.lastAsset)}
               </h2>
+              <div className={`${styles.userLogo} ${styles.user__item}`}>
+                <RiMessage2Line
+                  title={user.adminMessage}
+                  className={
+                    user.adminMessage.length > 0
+                      ? styles.userLogo__smsImgT
+                      : styles.userLogo__smsImg
+                  }
+                />
+              </div>
             </div>
           );
         })}

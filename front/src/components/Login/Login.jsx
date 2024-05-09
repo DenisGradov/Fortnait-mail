@@ -91,87 +91,102 @@ function Login({ isAuthenticated, setIsAuthenticated }) {
 
   console.log(errorInfo);
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.loginForm}>
-        <h1 className={styles.loginForm__title}>Sign In</h1>
-        <h2 className={styles.loginForm__description}>to continue</h2>
-        <form className={styles.loginFormForm}>
-          <input
-            className={`${styles.loginFormForm__input} ${
-              errorInfo ? styles.errorData : false
-            }`}
-            type="text"
-            value={formData.login}
-            onChange={(e) => handleOnChangeInputes(e, "login")}
-            name="login"
-            id="login"
-            placeholder="Login"
-          />
-          <div className={styles.loginFormFormPassword}>
+    <>
+      <div className={styles.wrapper}>
+        <div className={styles.loginForm}>
+          <h1 className={styles.loginForm__title}>Sign In</h1>
+          <h2 className={styles.loginForm__description}>to continue</h2>
+          <form className={styles.loginFormForm}>
             <input
-              className={`${styles.loginFormFormPassword__input} ${
+              className={`${styles.loginFormForm__input} ${
                 errorInfo ? styles.errorData : false
               }`}
-              type={passwordVisible ? "text" : "password"}
-              value={formData.password}
-              onChange={(e) => handleOnChangeInputes(e, "password")}
+              type="text"
+              value={formData.login}
+              onChange={(e) => handleOnChangeInputes(e, "login")}
               name="login"
               id="login"
-              placeholder="Password"
+              placeholder="Login"
             />
-            {passwordVisible ? (
-              <RiEyeLine
-                className={styles.loginFormFormPassword__yey}
-                onClick={handleEyeClick}
+            <div className={styles.loginFormFormPassword}>
+              <input
+                className={`${styles.loginFormFormPassword__input} ${
+                  errorInfo ? styles.errorData : false
+                }`}
+                type={passwordVisible ? "text" : "password"}
+                value={formData.password}
+                onChange={(e) => handleOnChangeInputes(e, "password")}
+                name="login"
+                id="login"
+                placeholder="Password"
               />
-            ) : (
-              <RiEyeOffLine
-                className={styles.loginFormFormPassword__yey}
-                onClick={handleEyeClick}
+              {passwordVisible ? (
+                <RiEyeLine
+                  className={styles.loginFormFormPassword__yey}
+                  onClick={handleEyeClick}
+                />
+              ) : (
+                <RiEyeOffLine
+                  className={styles.loginFormFormPassword__yey}
+                  onClick={handleEyeClick}
+                />
+              )}
+            </div>
+            <div className={styles.loginFormFormSavebox}>
+              <input
+                className={styles.customCheckbox}
+                type="checkbox"
+                name="saveLoginInfo"
+                id="saveLoginInfo"
+                checked={checkbox}
+                onChange={(e) => handleCheckBoxClick(e)}
               />
-            )}
-          </div>
-          <div className={styles.loginFormFormSavebox}>
-            <input
-              className={styles.customCheckbox}
-              type="checkbox"
-              name="saveLoginInfo"
-              id="saveLoginInfo"
-              checked={checkbox}
-              onChange={(e) => handleCheckBoxClick(e)}
-            />
-            <h2
-              className={styles.loginFormFormSavebox__text}
-              onClick={handleCheckBoxClick}
+              <h2
+                className={styles.loginFormFormSavebox__text}
+                onClick={handleCheckBoxClick}
+              >
+                Save
+              </h2>
+            </div>
+            <div className={styles.loginFormCapchaBox}>
+              <h2 className={styles.loginFormCapchaBox__text}>{`${capcha[0]} ${
+                capcha[2] === 1 ? "+" : "-"
+              } ${capcha[1]}`}</h2>
+              <h2 className={styles.loginFormCapchaBox__text}>=</h2>
+              <input
+                value={capcha[3]}
+                onChange={(e) => {
+                  setCapcha((prevValue) => ({
+                    ...prevValue,
+                    [3]: e.target.value,
+                  }));
+                }}
+                className={styles.loginFormCapchaBox__input}
+              />
+            </div>
+            <button
+              onClick={handleClickOnButton}
+              className={styles.loginFormForm__button}
             >
-              Save
-            </h2>
-          </div>
-          <div className={styles.loginFormCapchaBox}>
-            <h2 className={styles.loginFormCapchaBox__text}>{`${capcha[0]} ${
-              capcha[2] === 1 ? "+" : "-"
-            } ${capcha[1]}`}</h2>
-            <h2 className={styles.loginFormCapchaBox__text}>=</h2>
-            <input
-              value={capcha[3]}
-              onChange={(e) => {
-                setCapcha((prevValue) => ({
-                  ...prevValue,
-                  [3]: e.target.value,
-                }));
-              }}
-              className={styles.loginFormCapchaBox__input}
-            />
-          </div>
-          <button
-            onClick={handleClickOnButton}
-            className={styles.loginFormForm__button}
-          >
-            Sign in
-          </button>
-        </form>
+              Sign in
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+
+      <h2 className={styles.headerAdminMessageBig}>
+        Have a question? Write by email{" "}
+        <span className={styles.headerAdminMessageBlue}>
+          admin@kvantomail.com
+        </span>
+      </h2>
+      <h2 className={styles.headerAdminMessageSmall}>
+        Question?{" "}
+        <span className={styles.headerAdminMessageBlue}>
+          admin@kvantomail.com
+        </span>
+      </h2>
+    </>
   );
 }
 

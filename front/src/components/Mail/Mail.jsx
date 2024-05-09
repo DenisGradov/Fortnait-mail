@@ -5,6 +5,7 @@ import axios from "axios";
 import User from "./User/User";
 import Admin from "./Admin/Admin";
 import useCookie from "../../hooks/useCookie";
+import Blocked from "../Blocked/Blocked";
 
 function Mail() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -32,10 +33,18 @@ function Mail() {
         .then((response) => {
           setIsAuthenticated(true);
           if (response.data.status == "1") {
-            setUser({ status: false, email: response.data.email });
+            setUser({
+              status: false,
+              email: response.data.email,
+              blocked: response.data.blocked,
+            });
             console.log(response.data);
           } else {
-            setUser({ status: true, email: response.data.email });
+            setUser({
+              status: true,
+              email: response.data.email,
+              blocked: response.data.blocked,
+            });
             console.log(response.data);
           }
           setCheckCookieOnBack(true);
@@ -57,11 +66,15 @@ function Mail() {
     <>
       {isAuthenticated ? (
         user.status ? (
-          <User
-            isAuthenticated={isAuthenticated}
-            setIsAuthenticated={setIsAuthenticated}
-            userEmail={user.email}
-          />
+          user.blocked == "1" ? (
+            <Blocked userEmail={user.email} />
+          ) : (
+            <User
+              isAuthenticated={isAuthenticated}
+              setIsAuthenticated={setIsAuthenticated}
+              userEmail={user.email}
+            />
+          )
         ) : (
           <Admin />
         )

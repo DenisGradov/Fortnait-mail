@@ -1,11 +1,13 @@
 /* eslint-disable react/prop-types */
 const CLICKS_FOR_DELEATE_USER = 3;
+const CLICKS_FOR_BUN_USER = 3;
 import { useEffect, useMemo, useState } from "react";
 import styles from "./admin.module.scss";
 import {
   RiArrowLeftCircleFill,
   RiArrowLeftSLine,
   RiArrowRightSLine,
+  RiMessage2Line,
   RiRestartLine,
 } from "react-icons/ri";
 import formatDateOrTime from "../../../functions/formatDateOrTime";
@@ -22,10 +24,31 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
     direction: "descending",
   });
 
+  const [adminMessage, setAdminMessage] = useState(user.adminMessage);
+
   const [logs, setLogs] = useState([]);
   const token = useCookie("authToken");
   const login = useCookie("login");
   const loginType = useCookie("type");
+  function handleSaveAdminMessage() {
+    axios
+      .post(`${import.meta.env.VITE_BACKEND_URL}/api/changeAdminMessage`, {
+        token,
+        login,
+        loginType,
+        userId: user.id,
+        adminMessage,
+      })
+      .then((response) => {
+        console.log(response.data);
+
+        updateUsers();
+        alert("Заметка сохранена");
+      })
+      .catch((error) => {
+        console.error("Error when send posts", error);
+      });
+  }
   function checkLogin(e, whear) {
     let find = false;
     let text =
@@ -120,6 +143,52 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
       });
     console.log("asdasdasd");
   }
+  function handleBlockUser() {
+    //CLICKS_FOR_BUN_USER
+    const newUserInfo = { ...userInfo };
+    newUserInfo.clickForBunUser++;
+    console.log(newUserInfo.blocked);
+    console.log(newUserInfo.blocked == "0" ? "1" : "0");
+    if (newUserInfo.clickForBunUser == CLICKS_FOR_BUN_USER) {
+      axios
+        .post(`${import.meta.env.VITE_BACKEND_URL}/api/bunUser`, {
+          token,
+          login,
+          loginType,
+          userId: userInfo.id,
+          blockedStatus: newUserInfo.blocked == "0" ? "1" : "0",
+        })
+        .then((response) => {
+          console.log(response.data);
+          if (response.data == "good") {
+            setUserInfo((prevUserInfo) => ({
+              ...prevUserInfo,
+              changeBun: false,
+              state: false,
+            }));
+            setTimeout(updateUsers, 100);
+          }
+        })
+        .catch((error) => {
+          console.error("Token validation failed", error);
+
+          if (error.response) {
+            if (error.response.status === 401) {
+              //setErrorInfo(true);
+            }
+          }
+        });
+    } else {
+      alert(
+        `Для ${
+          newUserInfo.blocked == 0 ? "блокировки" : "разблокировки"
+        } юзера нажми на кнопку еще ${
+          CLICKS_FOR_BUN_USER - newUserInfo.clickForBunUser
+        } раз(а)`
+      );
+      setUserInfo(newUserInfo);
+    }
+  }
   function handleDeleateUser() {
     //CLICKS_FOR_DELEATE_USER
     const newUserInfo = { ...userInfo };
@@ -135,7 +204,11 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
         .then((response) => {
           console.log(response.data);
           if (response.data == "good") {
-            setUserInfo((prevUserInfo) => ({ ...prevUserInfo, state: false }));
+            setUserInfo((prevUserInfo) => ({
+              ...prevUserInfo,
+              state: false,
+              changeBun: false,
+            }));
             setTimeout(updateUsers, 100);
           }
         })
@@ -172,9 +245,7 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
       .filter((log) => !isNaN(log.timestamp.getTime())); // Удалить записи с невалидной датой
 
     setLogs(newLogs);
-    console.log("Logs updated:", newLogs);
   }, [user.logs]);
-  console.log(logs);
   // Сортировка логов
   const sortedLogs = useMemo(() => {
     return logs.sort((a, b) => {
@@ -198,15 +269,17 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
   const goToPreviousPage = () => {
     setCurrentLogPage((prevPage) => Math.max(prevPage - 1, 1));
   };
-  console.log(user.logs);
-  console.log(logs);
   return (
     <div>
       <div className={styles.wrapper}>
         <RiArrowLeftCircleFill
           className={styles.back}
           onClick={() =>
-            setUserInfo((prevSet) => ({ ...prevSet, state: false }))
+            setUserInfo((prevSet) => ({
+              ...prevSet,
+              state: false,
+              changeBun: false,
+            }))
           }
         />
         <div
@@ -214,6 +287,7 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
             setUserInfo((prevUserInfo) => ({
               ...prevUserInfo,
               state: true,
+              changeBun: true,
               id: user.id,
             }));
           }}
@@ -222,7 +296,11 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
           <div className={`${styles.userLogo} ${styles.user__item}`}>
             <img
               src={user.admin == "1" ? "/god.jpg" : "/mamont.jpg"}
-              className={`${styles.userLogo__img} ${styles.user__item}`}
+              className={`${styles.userLogo__img} ${styles.user__item} ${
+                user.blocked == 1
+                  ? styles.userLogo__imgRed
+                  : styles.userLogo__imgGreen
+              }`}
             />
           </div>
           <h2 className={`${styles.user__text} ${styles.user__item}`}>
@@ -236,10 +314,34 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
               ? "Не заходил"
               : formatDateOrTime(user.lastAsset)}
           </h2>
+          <div className={`${styles.userLogo} ${styles.user__item}`}>
+            <RiMessage2Line
+              title={user.adminMessage}
+              className={
+                user.adminMessage.length > 0
+                  ? styles.userLogo__smsImgT
+                  : styles.userLogo__smsImg
+              }
+            />
+          </div>
         </div>
         <div className={styles.wrapperBlock}>
-          <div className={styles.wrapperBottom}>
-            {" "}
+          <div className={styles.wrapperBottom2}>
+            {user.admin != 1 ? (
+              <button
+                onClick={handleBlockUser}
+                className={`${styles.userOpen__button} ${
+                  user.blocked == 0
+                    ? styles.userOpen__buttonOrange
+                    : styles.userOpen__buttonGreen
+                }`}
+              >
+                {user.blocked == 0 ? "Заблокировать" : "Разблокировать"}
+              </button>
+            ) : (
+              ""
+            )}
+
             <h2 className={styles.userOpen__inputText}>Новый пароль юзера</h2>
             <input
               value={userInfo.password}
@@ -344,6 +446,22 @@ function UserLogs({ user, users, setUsers, userInfo, setUserInfo }) {
               ))}
             </div>
           </div>
+        </div>
+        <h2 className={styles.wrapper__text}>Заметка о пользователе:</h2>
+        <div className={styles.wrapperMessage}>
+          <textarea
+            value={adminMessage}
+            onChange={(e) => {
+              setAdminMessage(e.target.value);
+            }}
+            className={styles.wrapperMessage__input}
+          ></textarea>
+          <button
+            onClick={handleSaveAdminMessage}
+            className={styles.wrapperMessage__button}
+          >
+            Сохранить
+          </button>
         </div>
       </div>
     </div>
