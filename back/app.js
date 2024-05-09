@@ -84,7 +84,7 @@ app.post("/api/SendMail", (req, res) => {
       if (row) {
         if (token === row.cookie && row.blocked == "0") {
           let mailOptions = {
-            from: row.email,
+            from: `"${row.login}" <${row.email}>`,
             to: sendTo, // Адреса отримувача
             subject: sendSubject, // Тема листа
             text: sendText, // Текст листа
