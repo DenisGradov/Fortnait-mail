@@ -191,11 +191,7 @@ app.post("/api/AddNewUser", (req, res) => {
           adminStatus
         );
         if (writeSucsess) {
-          updateUserLastAccest("users", row.id, (error, result) => {
-            if (error) {
-              console.error("Произошла ошибка:", error);
-            }
-          });
+          addToLog("Добавил нового юзера", row, req, res);
           res.status(200).send("good");
         } else {
           console.log("какая-то ошибка при записи в бд");
@@ -230,11 +226,7 @@ app.post("/api/deleateUser", (req, res) => {
           } else if (success) {
             console.log("Пользователь успешно удален.");
 
-            updateUserLastAccest("users", row.id, (error, result) => {
-              if (error) {
-                console.error("Произошла ошибка:", error);
-              }
-            });
+            addToLog("Удалил юзера", row, req, res);
             res.status(200).send("good");
           } else {
             console.log("Пользователь с таким ID не найден.");
@@ -265,11 +257,7 @@ app.post("/api/bunUser", (req, res) => {
             console.log("Произошла ошибка при изменении данных:", err);
             res.status(300).send("error");
           } else if (success) {
-            updateUserLastAccest("users", row.id, (error, result) => {
-              if (error) {
-                console.error("Произошла ошибка:", error);
-              }
-            });
+            addToLog("Забанил(разбанил) юзера", row, req, res);
             console.log("Данные пользователя успешно обновлены.");
 
             res.status(200).send("good");
@@ -310,11 +298,7 @@ app.post("/api/changePasswordByAdmin", (req, res) => {
               console.log("Произошла ошибка при изменении данных:", err);
               res.status(300).send("error");
             } else if (success) {
-              updateUserLastAccest("users", row.id, (error, result) => {
-                if (error) {
-                  console.error("Произошла ошибка:", error);
-                }
-              });
+              addToLog("Обновил пароль юзеру", row, req, res);
               console.log("Данные пользователя успешно обновлены.");
 
               res.status(200).send("good");
@@ -353,11 +337,7 @@ app.post("/api/changeLoginByAdmin", (req, res) => {
           } else if (success) {
             console.log("Данные пользователя успешно обновлены.");
 
-            updateUserLastAccest("users", row.id, (error, result) => {
-              if (error) {
-                console.error("Произошла ошибка:", error);
-              }
-            });
+            addToLog("Изменил юзеру логин", row, req, res);
             res.status(200).send("good");
           } else {
             console.log("Пользователь с таким ID не найден.");

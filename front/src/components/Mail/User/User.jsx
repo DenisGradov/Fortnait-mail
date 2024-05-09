@@ -465,14 +465,14 @@ function User({
       <h2 className={styles.headerAdminMessageBig}>
         {fromAdmin
           ? "Вы просматриваете почту "
-          : "Have a question? Write by email"}
+          : "Have a question? Write by email "}
         <span className={styles.headerAdminMessageBlue}>
           {fromAdmin ? "юзера" : "admin@kvantomail.com"}
         </span>
       </h2>
 
       <h2 className={styles.headerAdminMessageSmall}>
-        {fromAdmin ? "Почта " : "Question"}
+        {fromAdmin ? "Почта " : "Questions? "}
         <span className={styles.headerAdminMessageBlue}>
           {fromAdmin ? "юзера" : "admin@kvantomail.com"}
         </span>
