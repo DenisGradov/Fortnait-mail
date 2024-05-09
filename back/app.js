@@ -12,9 +12,6 @@ const transporter = nodemailer.createTransport({
   host: "127.0.0.1", // Указываем IPv4 адрес localhost
   port: 25,
   secure: false, // true для порта 465, false для порта 25 или 587
-  tls: {
-    rejectUnauthorized: false, // Если ваш сервер не использует сертификаты SSL/TLS
-  },
 });
 
 function addToLog(text, row, req, res) {
