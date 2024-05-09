@@ -59,7 +59,19 @@ const saltRounds = 10;
 
 // Для обробки URL-кодованих даних
 app.use(express.urlencoded({ extended: true }));
-
+app.use((req, res, next) => {
+  if (
+    req.headers["x-forwarded-proto"] !== "https" &&
+    process.env.NODE_ENV === "production"
+  ) {
+    // Строим URL для перенаправления на HTTPS
+    const secureUrl = `https://${req.hostname}${req.url}`;
+    res.redirect(301, secureUrl);
+  } else {
+    // Продолжаем обработку запроса, если он уже на HTTPS
+    next();
+  }
+});
 app.post("/", (req, res) => {
   // Представь, что тут код для проверки логина и пароля пользователя
   res.cookie("sessionId", "some-encrypted-session-id", {
