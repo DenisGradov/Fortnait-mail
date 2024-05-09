@@ -1,3 +1,4 @@
+const CLICK_TO_DELEATE_MESSAGE = 2;
 import { useEffect, useRef, useState } from "react";
 import styles from "./user.module.scss";
 import axios from "axios";
@@ -5,6 +6,7 @@ import {
   RiArrowLeftCircleFill,
   RiArrowLeftSLine,
   RiArrowRightSLine,
+  RiDeleteBin6Line,
   RiRestartLine,
   RiSearchLine,
   RiSettings3Line,
@@ -23,6 +25,10 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
 
   const intervalRef = useRef(null);
   const [searchInput, setSearchInput] = useState("");
+  const [chooseMail, setChooseMail] = useState({
+    id: 0,
+    clickToDeleate: 0,
+  });
   const [mailOnScreen, setMailOnScreen] = useState({
     numerPage: 0,
     mailOpen: false,
@@ -33,8 +39,55 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
   const login = useCookie("login");
   const loginType = useCookie("type");
 
+  function handleDeleateMessage(id) {
+    const newChooseMail = { ...chooseMail };
+    console.log(newChooseMail.id);
+    console.log(id);
+    if (newChooseMail.id == id) {
+      console.log(id);
+      console.log(newChooseMail.clickToDeleate);
+      newChooseMail.clickToDeleate++;
+    } else {
+      newChooseMail.id = id;
+      newChooseMail.clickToDeleate = 0;
+      newChooseMail.clickToDeleate++;
+    }
+    if (newChooseMail.clickToDeleate == CLICK_TO_DELEATE_MESSAGE) {
+      axios
+        .post(`${import.meta.env.VITE_BACKEND_URL}/api/deleatePost`, {
+          token,
+          login,
+          loginType,
+          id,
+        })
+        .then((response) => {
+          let newPosts = response.data;
+          console.log(newPosts);
+          newPosts.received = newPosts.received.reverse();
+
+          setChooseMail((prevInfo) => ({
+            ...prevInfo,
+            id: 0,
+            clickToDeleate: 0,
+          }));
+          setPosts(newPosts);
+        })
+        .catch((error) => {
+          console.error("Error when send posts", error);
+          setIsAuthenticated(false);
+        });
+    } else {
+      setChooseMail((prevInfo) => ({
+        ...prevInfo,
+        id: newChooseMail.id,
+        clickToDeleate: newChooseMail.clickToDeleate,
+      }));
+      alert("Are you sure? Click again to confirm");
+    }
+  }
+
   function handleOpenMail(element) {
-    console.log(element.viewed);
+    console.log(element);
     if (!element.viewed) {
       console.log("sss2");
       axios
@@ -199,6 +252,13 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
                 : styles.bottomBoxWithReceivedItem__notViewed
             }`}
           >
+            <RiDeleteBin6Line
+              onClick={(event) => {
+                event.stopPropagation(); // Запобігає спливанню події
+                handleDeleateMessage(item.id);
+              }}
+              className={styles.bottomBoxWithReceivedItem__elementIcon}
+            />
             <h2 className={styles.bottomBoxWithReceivedItem__element}>
               {item.sender.length > 35
                 ? item.sender.slice(0, 35) + "..."
@@ -335,6 +395,14 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
                         : styles.bottomBoxWithReceivedItem__notViewed
                     }`}
                   >
+                    <RiDeleteBin6Line
+                      onClick={(event) => {
+                        event.stopPropagation(); // Запобігає спливанню події
+                        handleDeleateMessage(item.id);
+                      }}
+                      className={styles.bottomBoxWithReceivedItem__elementIcon}
+                    />
+
                     <h2 className={styles.bottomBoxWithReceivedItem__element}>
                       {item.sender.length > 35
                         ? item.sender.slice(0, 35) + "..."

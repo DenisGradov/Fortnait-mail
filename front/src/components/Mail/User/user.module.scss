@@ -208,13 +208,14 @@ body {
     &BoxWithReceivedItem {
       padding: 10px 20px;
       display: flex;
+      align-items: center;
       justify-content: space-between;
       border: 1px solid #2a2a2a;
       font-family: "Roboto";
 
       cursor: pointer;
       &:hover {
-        scale: 1.005;
+        border: 1px solid #474141;
         transition-duration: 0.3s;
       }
       @media (max-width: 580px) {
@@ -235,7 +236,17 @@ body {
         flex: 25%;
         text-align: left;
         color: white;
-
+        &Icon {
+          z-index: 1;
+          margin-right: 5px;
+          font-size: 20px;
+          color: #808080;
+          cursor: pointer;
+          &:hover {
+            scale: 1.1;
+            transition-duration: 0.3s;
+          }
+        }
         &:nth-child(1) {
           flex: 20%;
         }

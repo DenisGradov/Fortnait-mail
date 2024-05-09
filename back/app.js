@@ -592,6 +592,56 @@ app.post("/api/checkPost", (req, res) => {
     });
   }
 });
+app.post("/api/deleatePost", (req, res) => {
+  const { token, login, loginType, id } = req.body;
+  if (token == "undefined") {
+    return res.status(401).send("Token is required");
+  } else {
+    searchRow("users", loginType, login, (row) => {
+      if (row && token === row.cookie && row.blocked == "0") {
+        let postsObject = JSON.parse(row.posts);
+        const newReceived = postsObject.received.map((e) => {
+          if (e.id != id) {
+            return e;
+          }
+        });
+
+        if (receivedUpdated) {
+          const updatedPosts = {
+            ...postsObject,
+            received: newReceived,
+          };
+          updateField(
+            login,
+            "posts",
+            login.includes("@") ? "email" : "login",
+            JSON.stringify(updatedPosts),
+            (err, result) => {
+              if (err) {
+                console.error("Помилка оновлення:", err);
+                res.status(500).send("Server error");
+              } else if (result.changes > 0) {
+                updateUserLastAccest("users", row.id, (error, result) => {
+                  if (error) {
+                    console.error("Произошла ошибка:", error);
+                  }
+                });
+                res.json(updatedPosts); // Отправляем полный объект posts на фронтенд
+              } else {
+                console.log("Рядок для оновлення не знайдено.");
+                res.status(404).send("User not found");
+              }
+            }
+          );
+        } else {
+          res.status(404).send("Mail not found");
+        }
+      } else {
+        res.status(401).send("Invalid token or user not found");
+      }
+    });
+  }
+});
 
 app.post("/helloworld", (req, res) => {
   res.status(200);
