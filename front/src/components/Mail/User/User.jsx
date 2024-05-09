@@ -175,7 +175,7 @@ function User({ isAuthenticated, setIsAuthenticated, userEmail }) {
   };
   if (sendMail) {
     //return <NotWorking setSendMail={setSendMail} />;
-    //return <SendMail setSendMail={setSendMail} />;
+    return <SendMail setSendMail={setSendMail} />;
   }
   if (mailOnScreen.mailOpen) {
     const item = mailOnScreen.element;

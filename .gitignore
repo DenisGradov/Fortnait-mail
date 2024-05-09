@@ -19,6 +19,7 @@ front/node_modules/
 package-lock.json
 back/package-lock.json
 front/package-lock.json
+/back/dataBase/mydatabase.db
 
 
 # Лок файлы
