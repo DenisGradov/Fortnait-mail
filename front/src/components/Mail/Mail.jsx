@@ -38,14 +38,12 @@ function Mail() {
               email: response.data.email,
               blocked: response.data.blocked,
             });
-            console.log(response.data);
           } else {
             setUser({
               status: true,
               email: response.data.email,
               blocked: response.data.blocked,
             });
-            console.log(response.data);
           }
           setCheckCookieOnBack(true);
         })
@@ -61,7 +59,6 @@ function Mail() {
 
   if (!checkCookieOnBack)
     return <div style={{ backgroundColor: "#19191a" }}>Waiting..</div>;
-  console.log(user);
   return (
     <>
       {isAuthenticated ? (

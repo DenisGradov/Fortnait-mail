@@ -16,7 +16,6 @@ function SendMail({ setSendMail }) {
   const loginType = useCookie("type");
   const navigate = useNavigate();
   function handleButtonClick() {
-    console.log(sendMailInfo);
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/api/SendMail`, {
         token,

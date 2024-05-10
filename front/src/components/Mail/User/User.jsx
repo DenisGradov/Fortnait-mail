@@ -49,11 +49,7 @@ function User({
 
   function handleDeleateMessage(id) {
     const newChooseMail = { ...chooseMail };
-    console.log(newChooseMail.id);
-    console.log(id);
     if (newChooseMail.id == id) {
-      console.log(id);
-      console.log(newChooseMail.clickToDeleate);
       newChooseMail.clickToDeleate++;
     } else {
       newChooseMail.id = id;
@@ -70,7 +66,6 @@ function User({
         })
         .then((response) => {
           let newPosts = response.data;
-          console.log(newPosts);
           newPosts.received = newPosts.received.reverse();
 
           setChooseMail((prevInfo) => ({
@@ -96,9 +91,7 @@ function User({
   }
 
   function handleOpenMail(element) {
-    console.log(element);
     if (!element.viewed && !fromAdmin) {
-      console.log("sss2");
       axios
         .post(`${import.meta.env.VITE_BACKEND_URL}/api/checkPost`, {
           token,
@@ -108,7 +101,6 @@ function User({
         })
         .then((response) => {
           let newPosts = response.data;
-          console.log(newPosts);
           newPosts.received = newPosts.received.reverse();
 
           setPosts(newPosts);
@@ -199,7 +191,6 @@ function User({
     }
   }, [filteredPosts, mailOnScreen.numerPage]);
 
-  console.log(posts.received);
   function handleUpdateInput(e) {
     setSearchInput(e.target.value);
   }
@@ -403,11 +394,9 @@ function User({
               const currentPage = mailOnScreen.numerPage;
               const startIndex = currentPage * postsPerPage;
               const endIndex = startIndex + postsPerPage;
-              console.log(index);
               if (item == undefined) return false;
               // Only proceed if the post's index is within the range of the current page
               if (index >= startIndex && index < endIndex) {
-                console.log(item);
                 return (
                   <div
                     key={`received mail ${index}`}
