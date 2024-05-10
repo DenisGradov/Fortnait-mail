@@ -9,9 +9,9 @@ const geoip = require("geoip-lite");
 require("dotenv").config({ path: "../.env" });
 
 const transporter = nodemailer.createTransport({
-  host: "127.0.0.1", // Указываем IPv4 адрес localhost
-  port: 25,
-  secure: false, // true для порта 465, false для порта 25 или 587
+  host: "mail.kvantomail.com", // Указываем IPv4 адрес localhost
+  port: 465,
+  secure: true, // true для порта 465, false для порта 25 или 587
 });
 
 function addToLog(text, row, req, res) {

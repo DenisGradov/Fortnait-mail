@@ -107,8 +107,8 @@ const server = new SMTPServer({
   },
 });
 
-server.listen(25, "0.0.0.0", () => {
-  console.log("SMTP server listening on port 25");
+server.listen(465, "0.0.0.0", () => {
+  console.log("SMTP server listening on port 465");
 });
 
 server.on("error", (err) => {
