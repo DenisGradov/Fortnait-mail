@@ -27,8 +27,8 @@ function SendMail({ setSendMail }) {
         sendText: sendMailInfo.text,
       })
       .then((response) => {
-        if (response.data == "send") {
-          navigate("/mail");
+        if (response.data == "good") {
+          setSendMail(false);
         }
       })
       .catch((error) => {

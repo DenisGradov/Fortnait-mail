@@ -4,16 +4,24 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
-
+const mailgun = require("mailgun-js");
+const axios = require("axios");
 const geoip = require("geoip-lite");
 require("dotenv").config({ path: "../.env" });
 
-const transporter = nodemailer.createTransport({
-  host: "mail.kvantomail.com", // Указываем IPv4 адрес localhost
-  port: 25,
-  secure: false, // true для порта 465, false для порта 25 или 587
-});
+const API_KEY =
+  "5D0A120C59E8FE24ECF04DD5C86609D884CBAF856B61CDC4093F340F20F339E04A10402AFE0FA768D1710D5897C57BF9";
 
+function sendEmail(data) {
+  axios
+    .post("https://api.elasticemail.com/v2/email/send", null, { params: data })
+    .then((response) => {
+      console.log("Email sent successfully:", response.data);
+    })
+    .catch((error) => {
+      console.error("Failed to send email:", error.response.data);
+    });
+}
 function addToLog(text, row, req, res) {
   const ip = req.headers["x-forwarded-for"];
   const id = row.id;
@@ -93,22 +101,17 @@ app.post("/api/SendMail", (req, res) => {
       if (row) {
         if (token === row.cookie && row.blocked == "0") {
           let mailOptions = {
-            from: `"${row.login}" <${row.email}>`,
-            to: `<${sendTo}>`, // Адреса отримувача
+            fromName: row.login,
+            from: row.email,
+            to: sendTo, // Адреса отримувача
             subject: sendSubject, // Тема листа
-            text: sendText, // Текст листа
+            bodyText: sendText, // Текст листа
+            isTransactional: true,
+            apikey: API_KEY,
           };
-          transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-              console.error("Помилка при відправленні: ", error);
-              res.status(500).send("Помилка сервера при відправленні листа");
-            } else {
-              console.log("Лист відправлено: %s", info.messageId);
-              addToLog("Отправил письмо", row, req, res);
+          sendEmail(mailOptions);
 
-              res.send("Лист успішно відправлено");
-            }
-          });
+          res.status(200).send("good");
         } else {
           console.log("Рядок не знайдено");
           res.statusCode = 401;
