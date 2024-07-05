@@ -90,7 +90,8 @@
           }
         }
       }
-      &__button {
+      &__button,
+      &__buttonExit{
         margin-top: 17px;
         padding: 10px 10px;
         text-align: center;
@@ -103,6 +104,10 @@
           scale: 1.03;
           transition-duration: 0.3s;
         }
+      }
+
+      &__buttonExit{
+        margin-left: 20px;
       }
     }
   }

@@ -14,6 +14,10 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated, userEmail }) {
   const loginType = useCookie("type");
 
   const navigate = useNavigate();
+  function handleButtonExitClick(){
+    navigate("/logout");
+    setIsAuthenticated(false);
+  }
   function handleButtonClick() {
     axios
       .post(`${import.meta.env.VITE_BACKEND_URL}/api/ChangePassword`, {
@@ -113,6 +117,12 @@ function UserSettings({ setSettingsOpen, setIsAuthenticated, userEmail }) {
               className={styles.loginFormInput__button}
             >
               Change password
+            </button>
+            <button
+              onClick={handleButtonExitClick}
+              className={styles.loginFormInput__buttonExit}
+            >
+              Exit
             </button>
           </form>
         </div>

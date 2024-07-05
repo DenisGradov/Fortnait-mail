@@ -14,6 +14,8 @@ import Login from "./components/Login/Login";
 import Mail from "./components/Mail/Mail";
 import Logout from "./components/Logout/Logout";
 import useCookie from "./hooks/useCookie";
+import {MdAppRegistration} from "react-icons/md";
+import Registration from "./components/Registration/Registration.jsx";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
@@ -66,6 +68,12 @@ function App() {
           }
         />
         <Route path="/mail" element={<Mail />} />
+        <Route path="/registration" element={
+            <Registration
+                isAuthenticated={isAuthenticated}
+                setIsAuthenticated={setIsAuthenticated}
+            />
+        } />
         <Route
           path="/logout"
           element={

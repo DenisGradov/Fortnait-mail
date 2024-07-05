@@ -732,6 +732,105 @@ app.post("/api/login", (req, res) => {
   if (!formData) return res.status(401).send("Token is required");
 });
 
+app.post("/api/registration", (req, res) => {
+  const { login, email, password } = req.body.formData;
+
+  const formattedEmail = email.includes("@kvantomail.com")
+      ? email
+      : `${email}@kvantomail.com`;
+
+  // Проверка наличия email в базе данных
+  searchRow("users", "email", formattedEmail, (emailRow) => {
+    if (emailRow) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+
+    // Проверка наличия логина в базе данных
+    searchRow("users", "login", login, (loginRow) => {
+      if (loginRow) {
+        return res.status(400).json({ error: "Login already exists" });
+      }
+
+      // Хеширование пароля
+      bcrypt.hash(password, 10, (err, hash) => {
+        if (err) {
+          return res.status(500).json({ error: "Server error" });
+        }
+
+        // Добавление нового пользователя в базу данных
+        const allGood = addNewUser(login, formattedEmail, hash, 0);
+
+        if (!allGood) {
+          return res.status(500).json({ error: "Error adding user to the database" });
+        }
+
+        console.log(`Пользователь добавлен с логином: ${login}`);
+
+        // Проверка наличия нового пользователя в базе данных
+        setTimeout(() => {
+          searchRow("users", "login", login, (newUserRow) => {
+            if (!newUserRow) {
+              console.log('User not found after creation');
+              return res.status(500).json({ error: "User not found after creation" });
+            }
+
+            // Генерация JWT токена
+            const token = jwt.sign({ userId: login }, SECRET_KEY, {
+              expiresIn: "10y",
+            });
+
+            // Обновление куки в базе данных
+            updateField(login, "cookie", "login", token, (err, result) => {
+              if (err) {
+                console.error("Ошибка при обновлении cookie в БД:", err);
+                return res.status(500).send("Ошибка при обновлении cookie");
+              }
+
+              if (result.changes > 0) {
+                console.log("Куки обновлены в БД для пользователя с логином:", login);
+              } else {
+                console.log("Рядок для обновления куки не найден.");
+              }
+
+              // Логирование регистрации
+              addToLog("Зарегистрировался", newUserRow, req, res);
+
+              // Установка куки в браузере
+              res.cookie("authToken", token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                expires: new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000), // 10 лет
+              });
+              res.cookie("login", login, {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                expires: new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000), // 10 лет
+              });
+              res.cookie("type", "login", {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+                expires: new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000), // 10 лет
+              });
+
+              console.log(`Куки установлены для пользователя с логином: ${login}`);
+
+              // Отправка ответа клиенту
+              res.status(200).json({
+                token,
+                login,
+                type: "login",
+              });
+            });
+          });
+        }, 1000); // Добавлена задержка для уверенности, что пользователь был добавлен
+      });
+    });
+  });
+});
+
 app.post("/logout", (req, res) => {
   // Удали куки при выходе
   res.clearCookie("sessionId");

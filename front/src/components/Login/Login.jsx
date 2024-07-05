@@ -94,9 +94,10 @@ function Login({ isAuthenticated, setIsAuthenticated }) {
     <>
       <div className={styles.wrapper}>
         <div className={styles.loginForm}>
-          <h1 className={styles.loginForm__title}>Sign In</h1>
+          <h1 className={styles.loginForm__title}>Sign In <span><a className={styles.headerAdminMessageBlue} href="./registration">or Registration</a></span></h1>
           <h2 className={styles.loginForm__description}>to continue</h2>
           <form className={styles.loginFormForm}>
+
             <input
               className={`${styles.loginFormForm__input} ${
                 errorInfo ? styles.errorData : false
