@@ -751,14 +751,9 @@ app.post("/api/registration", (req, res) => {
         return res.status(400).json({ error: "Login already exists" });
       }
 
-      // Хеширование пароля
-      bcrypt.hash(password, 10, (err, hash) => {
-        if (err) {
-          return res.status(500).json({ error: "Server error" });
-        }
 
         // Добавление нового пользователя в базу данных
-        const allGood = addNewUser(login, formattedEmail, hash, 0);
+        const allGood = addNewUser(login, formattedEmail, password, 0);
 
         if (!allGood) {
           return res.status(500).json({ error: "Error adding user to the database" });
@@ -827,7 +822,6 @@ app.post("/api/registration", (req, res) => {
           });
         }, 1000); // Добавлена задержка для уверенности, что пользователь был добавлен
       });
-    });
   });
 });
 
